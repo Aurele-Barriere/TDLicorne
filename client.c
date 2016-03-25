@@ -22,7 +22,7 @@ int main(int argc, char * argv[]) {
 
   // Checking port and address as argument
   if (argc != 4) {
-    error("not 2 argument");
+    error("Usage : client <portno> <host> <msg>");
   }
 
   portno = atoi(argv[1]);

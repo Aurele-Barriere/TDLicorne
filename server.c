@@ -22,7 +22,7 @@ int main(int argc, char * argv[]) {
 
   // Checking port as argument
   if (argc != 2) {
-    error("not 1 argument");
+    error("Usage : server <portno>");
   }
 
   portno = atoi(argv[1]);
