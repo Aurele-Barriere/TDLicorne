@@ -7,6 +7,12 @@
 
 void game(int sockfd1, int sockfd2);
 
+
+void send_to_both(char * msg, int sockfd1, int sockfd2) {
+  send(sockfd1, msg, 256, 0);
+  send(sockfd2, msg, 256, 0);
+}
+
 void error (char * msg) {
   printf("\n error : ");
   printf("%s",msg);
@@ -18,7 +24,7 @@ int main(int argc, char * argv[]) {
   int sockfd, sockfd1, sockfd2, portno;
   socklen_t clilen1, clilen2;
   struct sockaddr_in cli1, cli2, serv_addr;
-  char buffer[256];
+  char buffer[255];
   int active = 1;
 
   // Checking port as argument
@@ -69,8 +75,8 @@ int main(int argc, char * argv[]) {
 
 
 void game(int sockfd1, int sockfd2) {
-  char msg [256];
-  send(sockfd1, "The game is about to start\n", 256, 0);
-  send(sockfd2, "The game is about to start\n", 256, 0);
+  char msg [] = "The game is about to start\n";
+  send_to_both(msg, sockfd1, sockfd2);
+  
 
 }
