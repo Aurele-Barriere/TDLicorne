@@ -7,7 +7,7 @@
 
 void error (char * msg) {
   printf("\n error : ");
-  printf(msg);
+  printf("%s",msg);
   printf("\n");
   exit(1);
 }

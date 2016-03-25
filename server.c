@@ -7,7 +7,7 @@
 
 void error (char * msg) {
   printf("\n error : ");
-  printf(msg);
+  printf("%s",msg);
   printf("\n");
   exit(1);
 }
@@ -16,7 +16,6 @@ int main(int argc, char * argv[]) {
   int sockfd, acksockfd, portno;
   socklen_t clilen;
   struct sockaddr_in cli_addr, serv_addr;
-  //struct hostent * server;
   char buffer[256];
   int active = 1;
 
@@ -37,7 +36,7 @@ int main(int argc, char * argv[]) {
   serv_addr.sin_addr.s_addr = INADDR_ANY;
   serv_addr.sin_port = htons(portno);
 
-  //memset ?
+  
 
 
   // binding socket
