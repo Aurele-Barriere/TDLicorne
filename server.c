@@ -5,6 +5,8 @@
 #include <string.h>
 #include <unistd.h>
 
+void game(int sockfd1, int sockfd2);
+
 void error (char * msg) {
   printf("\n error : ");
   printf("%s",msg);
@@ -13,9 +15,9 @@ void error (char * msg) {
 }
 
 int main(int argc, char * argv[]) {
-  int sockfd, acksockfd, portno;
-  socklen_t clilen;
-  struct sockaddr_in cli_addr, serv_addr;
+  int sockfd, sockfd1, sockfd2, portno;
+  socklen_t clilen1, clilen2;
+  struct sockaddr_in cli1, cli2, serv_addr;
   char buffer[256];
   int active = 1;
 
@@ -26,7 +28,6 @@ int main(int argc, char * argv[]) {
 
   portno = atoi(argv[1]);
 
-
   // Creating socket
   sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
   if (sockfd < 0) {error("creating socket");}
@@ -35,9 +36,6 @@ int main(int argc, char * argv[]) {
   serv_addr.sin_family = AF_INET;
   serv_addr.sin_addr.s_addr = INADDR_ANY;
   serv_addr.sin_port = htons(portno);
-
-  
-
 
   // binding socket
   if (
@@ -49,20 +47,30 @@ int main(int argc, char * argv[]) {
   // listening
   listen(sockfd, 5);
 
-  // waiting for client to connect
-  while (active) {
-    acksockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
-    memset(buffer, 0, 256);
-    
-    recv(acksockfd, buffer, 256, 0);
-    printf("%s\n", buffer);
-    send(acksockfd, buffer, 256, 0);
-  }
-
+  // waiting for clients to connect
+  sockfd1 = accept(sockfd, (struct sockaddr *) &cli1, &clilen1);
+  // player 1 is here
+  memset(buffer, 0, 256);
+  send(sockfd1, "1", 256, 0); // sending player id
+  sockfd2 = accept(sockfd, (struct sockaddr *) &cli2, &clilen2);
+  //player 2 is here
+  send(sockfd2, "2", 256, 0); // sending player id
   
- 
+  //all players are connected, strating game
+  game(sockfd1, sockfd2);
+
+  //once everything is done
   printf("\n Server shutdown \n");
+  close(sockfd);
+  close(sockfd1);
+  close(sockfd2);
  return 0;
 }
 
 
+void game(int sockfd1, int sockfd2) {
+  char msg [256];
+  send(sockfd1, "The game is about to start\n", 256, 0);
+  send(sockfd2, "The game is about to start\n", 256, 0);
+
+}

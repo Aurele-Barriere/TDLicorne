@@ -17,12 +17,13 @@ int main(int argc, char * argv[]) {
   struct sockaddr_in serv_addr;
   struct hostent * server;
   int active = 1;
+  char player;
   
   char buffer[256];
 
   // Checking port and address as argument
-  if (argc != 4) {
-    error("Usage : client <portno> <host> <msg>");
+  if (argc != 3) {
+    error("Usage : client <portno> <host>");
   }
 
   portno = atoi(argv[1]);
@@ -47,16 +48,18 @@ int main(int argc, char * argv[]) {
   }
 
   // sending / recieving
-  while(active) {
 
-    memset(buffer, 0 , 256);
-    //fgets(buffer, 255, stdin);
+  memset(buffer, 0 , 256);
+  recv(sockfd, buffer, 256, 0);
+  player = buffer[0];
+  printf("You are player number %s\n", buffer);
+  //printf("%c\n", player);
+  memset(buffer, 0, 256);
+  recv(sockfd, buffer, 256, 0);
+  printf("%s", buffer);
     
-    send(sockfd, argv[3], 256, 0);
-    recv(sockfd, buffer, 256, 0);
-    printf("What the server got : %s\n", buffer);
     
-    active = 0; //exit after the msg
-  }
+
+    close(sockfd);
   return 0;
 }
