@@ -5,12 +5,20 @@
 #include <string.h>
 #include <unistd.h>
 
+#define BUFFER_SIZE 256
+
+
 void error (char * msg) {
   printf("\n error : ");
   printf("%s",msg);
   printf("\n");
   exit(1);
 }
+
+void send_verif(int sockfd, char * msg) {
+
+}
+
 
 int main(int argc, char * argv[]) {
   int sockfd, portno;
@@ -19,7 +27,7 @@ int main(int argc, char * argv[]) {
   int active = 1;
   char player;
   
-  char buffer[256];
+  char buffer[BUFFER_SIZE];
 
   // Checking port and address as argument
   if (argc != 3) {
@@ -49,13 +57,13 @@ int main(int argc, char * argv[]) {
 
   // sending / recieving
 
-  memset(buffer, 0 , 256);
-  recv(sockfd, buffer, 256, 0);
+  memset(buffer, 0 , BUFFER_SIZE);
+  recv(sockfd, buffer, BUFFER_SIZE, 0);
   player = buffer[0];
   printf("You are player number %s\n", buffer);
   //printf("%c\n", player);
-  memset(buffer, 0, 256);
-  recv(sockfd, buffer, 256, 0);
+  memset(buffer, 0, BUFFER_SIZE);
+  recv(sockfd, buffer, BUFFER_SIZE, 0);
   printf("%s", buffer);
     
     

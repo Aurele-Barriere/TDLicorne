@@ -5,12 +5,14 @@
 #include <string.h>
 #include <unistd.h>
 
+#define BUFFER_SIZE 256
+
 void game(int sockfd1, int sockfd2);
 
 
 void send_to_both(char * msg, int sockfd1, int sockfd2) {
-  send(sockfd1, msg, 256, 0);
-  send(sockfd2, msg, 256, 0);
+  send(sockfd1, msg, BUFFER_SIZE, 0);
+  send(sockfd2, msg, BUFFER_SIZE, 0);
 }
 
 void error (char * msg) {
@@ -24,7 +26,7 @@ int main(int argc, char * argv[]) {
   int sockfd, sockfd1, sockfd2, portno;
   socklen_t clilen1, clilen2;
   struct sockaddr_in cli1, cli2, serv_addr;
-  char buffer[255];
+  char buffer[BUFFER_SIZE];
   int active = 1;
 
   // Checking port as argument
@@ -56,11 +58,11 @@ int main(int argc, char * argv[]) {
   // waiting for clients to connect
   sockfd1 = accept(sockfd, (struct sockaddr *) &cli1, &clilen1);
   // player 1 is here
-  memset(buffer, 0, 256);
-  send(sockfd1, "1", 256, 0); // sending player id
+  memset(buffer, 0, BUFFER_SIZE);
+  send(sockfd1, "1", BUFFER_SIZE, 0); // sending player id
   sockfd2 = accept(sockfd, (struct sockaddr *) &cli2, &clilen2);
   //player 2 is here
-  send(sockfd2, "2", 256, 0); // sending player id
+  send(sockfd2, "2", BUFFER_SIZE, 0); // sending player id
   
   //all players are connected, strating game
   game(sockfd1, sockfd2);
