@@ -4,8 +4,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include "network.h"
+#include "defines.h"
 
-#define BUFFER_SIZE 256
 
 
 void error (char * msg) {
@@ -14,25 +15,6 @@ void error (char * msg) {
   printf("\n");
   exit(1);
 }
-
-void send_verif(int sockfd, char * msg) {
-  int sent = 0;
-  int n = 0;
-  while(sent < BUFFER_SIZE) {
-    n = send(sockfd, msg, BUFFER_SIZE, 0);
-    sent += n;
-  }
-}
-
-void recv_verif(int sockfd, char * buffer) {
-  int received = 0;
-  int n = 0;
-  while(received < BUFFER_SIZE) {
-    n = recv(sockfd, buffer, BUFFER_SIZE, 0);
-    received += n;
-  }
-}
-
 
 
 int main(int argc, char * argv[]) {
