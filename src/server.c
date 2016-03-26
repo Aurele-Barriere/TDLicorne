@@ -12,14 +12,6 @@
 void game(int sockfd1, int sockfd2);
 
 
-void error (char * msg) {
-  printf("\n error : ");
-  printf("%s",msg);
-  printf("\n");
-  exit(1);
-}
-
-
 int main(int argc, char * argv[]) {
   int sockfd, sockfd1, sockfd2, portno;
   socklen_t clilen1, clilen2;

@@ -8,15 +8,6 @@
 #include "defines.h"
 
 
-
-void error (char * msg) {
-  printf("\n error : ");
-  printf("%s",msg);
-  printf("\n");
-  exit(1);
-}
-
-
 int main(int argc, char * argv[]) {
   int sockfd, portno;
   struct sockaddr_in serv_addr;
