@@ -73,12 +73,12 @@ int main(int argc, char * argv[]) {
   // sending / recieving
 
   memset(buffer, 0 , BUFFER_SIZE);
-  recv(sockfd, buffer, BUFFER_SIZE, 0);
+  recv_verif(sockfd, buffer);
   player = buffer[0];
   printf("You are player number %s\n", buffer);
   //printf("%c\n", player);
   memset(buffer, 0, BUFFER_SIZE);
-  recv(sockfd, buffer, BUFFER_SIZE, 0);
+  recv_verif(sockfd, buffer);
   printf("%s", buffer);
     
     
