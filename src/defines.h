@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 #define BUFFER_SIZE 256
-#define MAX_TRIES 20
+#define MAX_TRIES 200
 
 void error (char * msg);
 #endif

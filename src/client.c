@@ -47,9 +47,12 @@ int main(int argc, char * argv[]) {
 
   memset(buffer, 0 , BUFFER_SIZE);
   recv_verif(sockfd, buffer);
-  player = buffer[0];
-  printf("You are player number %s\n", buffer);
-  //printf("%c\n", player);
+  player = buffer[0] - '0';
+  printf("You are player number %d\n", player);
+  if (player == 1) {
+    printf("Waiting for other player...\n");
+  }
+  
   memset(buffer, 0, BUFFER_SIZE);
   recv_verif(sockfd, buffer);
   printf("%s", buffer);
