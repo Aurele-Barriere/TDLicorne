@@ -24,6 +24,19 @@ void game(int you, int sockfd) {
     gamestate = buffer[0];
     player = buffer[1];
 
+    //checking for the end of the game
+    if (gamestate == '\0') {
+      printf("The game is over\n");
+      keep_playing = 0;
+      if (player == you) {
+	printf(" You Won ! \n");
+      }
+      else {
+	printf (" You lost \n");
+      }
+      break;
+    }
+
     //rendering
     printf("\n");
     for (i=0; i<gamestate; i++) {
