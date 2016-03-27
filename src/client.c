@@ -8,6 +8,49 @@
 #include "defines.h"
 
 
+void game(int you, int sockfd) {
+  int keep_playing = 1;
+  int input;
+  char buffer [BUFFER_SIZE];
+  int player;
+  int gamestate;
+  int choice;
+  int i;
+  while(keep_playing) {
+    //receiving gamestate and player
+    memset(buffer, 0, BUFFER_SIZE);
+    recv_verif(sockfd, buffer);
+    
+    gamestate = buffer[0];
+    player = buffer[1];
+
+    //rendering
+    printf("\n");
+    for (i=0; i<gamestate; i++) {
+      printf(" | ");
+    }
+    printf("\n");
+
+    // asking for input if needed
+    if (player == you) {
+      printf("This is your turn !\nHow much do you want to take? (must be between 1-3)\n");
+      choice = getchar();
+      getchar();
+      choice -= '0';
+      memset(buffer, 0, BUFFER_SIZE);
+      buffer[0] = choice;
+      printf("Your choice is %d\n", choice);
+      send_verif(sockfd, buffer);
+    }
+    else {
+      printf("Your opponent is playing, please wait...\n");
+    }
+	    
+    
+  }
+}
+
+
 int main(int argc, char * argv[]) {
   int sockfd, portno;
   struct sockaddr_in serv_addr;
@@ -57,8 +100,8 @@ int main(int argc, char * argv[]) {
   recv_verif(sockfd, buffer);
   printf("%s", buffer);
     
-    
+  game(player, sockfd);
 
-    close(sockfd);
+  close(sockfd);
   return 0;
 }
