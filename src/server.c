@@ -101,7 +101,7 @@ void game(int sockfd1, int sockfd2) {
 
     // updating game state
     choice = buffer[0];
-    if (choice > 3 || choice < 1) { choice = 1; } 
+    if (choice > 3 || choice < 1 || choice > gamestate-1) { choice = 1; } 
     //rule checking must be done server-side 
     //we're never sure of what code the client is running
     gamestate -= choice;
