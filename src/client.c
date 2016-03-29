@@ -10,6 +10,7 @@
 #include "board.h"
 
 void game_7colors(int you, int sockfd) {
+  printf("Beginning of game of 7 colors\n");
   int keep_playing = 1;
   char choice;
   char buffer [BUFFER_SIZE];
@@ -155,7 +156,7 @@ int main(int argc, char * argv[]) {
       board[i] = buffer[i];
   print_board(board);
     
-  game(player, sockfd);
+  game_7colors(player, sockfd);
 
   close(sockfd);
   return 0;

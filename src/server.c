@@ -45,12 +45,6 @@ int main(int argc, char * argv[]) {
     error("binding");
   }
   
-  // generating a new board
-  set_sym_board();
-  print_board(board);
-  
-  
-  
   // listening
   listen(sockfd, 5);
 
@@ -65,7 +59,7 @@ int main(int argc, char * argv[]) {
   memset(buffer, 0 , BUFFER_SIZE);
   buffer[0] = '2';
   send_verif(sockfd2, buffer); // sending player id
-  
+  printf("both players connected\n");
   //all players are connected, starting game
   game_7colors(sockfd1, sockfd2);
 
@@ -80,6 +74,7 @@ int main(int argc, char * argv[]) {
 void game_7colors(int sockfd1, int sockfd2)
 {
   // the 7 colors game
+  printf("Starting game of 7 colors\n");
   int keep_playing = 1;
   int player = rand() % 2;
   int winner = 0;
