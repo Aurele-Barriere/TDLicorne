@@ -108,6 +108,7 @@ void game_7colors(int sockfd1, int sockfd2)
     //rule checking
     if (choice < 'a' || choice >= 'a' + NB_COLORS) {
       choice = rand() % NB_COLORS;
+      choice += 'a';
       printf("Wrong input, player has been assigned color %c\n", choice);
     }
     
