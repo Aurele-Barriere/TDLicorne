@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
 #include "network.h"
 #include "defines.h"
 
@@ -65,8 +66,8 @@ int main(int argc, char * argv[]) {
   buffer[0] = '2';
   send_verif(sockfd2, buffer); // sending player id
   
-  //all players are connected, strating game
-  game(sockfd1, sockfd2);
+  //all players are connected, starting game
+  game_7colors(sockfd1, sockfd2);
 
   //once everything is done
   printf("\n Server shutdown \n");
@@ -78,9 +79,58 @@ int main(int argc, char * argv[]) {
 
 void game_7colors(int sockfd1, int sockfd2)
 {
-    
-}
+  // the 7 colors game
+  int keep_playing = 1;
+  int gamestate = 21;
+  int player = rand() % 2;
+  int winner = 0;
+  char choice;
+  char buffer [BUFFER_SIZE];
+  int score1 = 0;
+  int score2 = 0;
+  int i;
+  
+  set_sym_board(); //initializing board
+  while(keep_playing) {
+    //sending board and player
+    memset(buffer, 0, BUFFER_SIZE);
+    for (i = 0; i < BOARD_SIZE*BOARD_SIZE; i++) {
+      buffer[i] = board[i];
+    }
+    buffer[BOARD_SIZE*BOARD_SIZE] = player;
+    send_to_both(buffer, sockfd1, sockfd2);
 
+    //awaiting input from player
+    memset(buffer, 0, BUFFER_SIZE);
+    if (player == 1) {
+      recv_verif(sockfd1, buffer);
+    }
+    else {
+      recv_verif(sockfd2, buffer);
+    }
+
+    choice = buffer[0];
+
+    //rule checking
+    if (choice < 0 || choice >= NB_COLORS) {
+      choice = rand() % NB_COLORS;
+    }
+    
+    //updating game state
+    if (player == 1) {
+      update_board(color1, choice, board);
+    }
+    else {
+      update_board(color2, choice, board);
+    }
+
+    //checking end game condition
+    // TO DO
+
+    //changing player
+    player = 3 - player;
+  }
+}
 void game(int sockfd1, int sockfd2) {
   // for now, we implement a small version of the Marienbad game
   // for 7 colors, the steps should be the same

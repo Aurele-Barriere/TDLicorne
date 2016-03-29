@@ -3,7 +3,7 @@ EXT  = c
 CXX  = gcc
 EXEC = server client
 
-CXXFLAGS = -W -Wall -Wextra -O3
+CXXFLAGS = -W 
 LDFLAGS  = 
 
 SRC_DIR = src
