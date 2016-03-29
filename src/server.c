@@ -48,6 +48,8 @@ int main(int argc, char * argv[]) {
   set_sym_board();
   print_board(board);
   
+  
+  
   // listening
   listen(sockfd, 5);
 
@@ -64,7 +66,7 @@ int main(int argc, char * argv[]) {
   send_verif(sockfd2, buffer); // sending player id
   
   //all players are connected, strating game
-  game_7colors(sockfd1, sockfd2);
+  game(sockfd1, sockfd2);
 
   //once everything is done
   printf("\n Server shutdown \n");
@@ -84,8 +86,7 @@ void game(int sockfd1, int sockfd2) {
   // for 7 colors, the steps should be the same
   // but we should encapsulate better game state
 
-  char msg [] = "The game is about to start\n";
-  send_to_both(msg, sockfd1, sockfd2);
+  send_to_both(board, sockfd1, sockfd2);
   int keep_playing = 1;
   int gamestate = 21;
   int player = 1;

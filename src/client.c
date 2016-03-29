@@ -7,6 +7,7 @@
 #include "network.h"
 #include "defines.h"
 
+#include "board.h"
 
 void game(int you, int sockfd) {
   int keep_playing = 1;
@@ -69,6 +70,7 @@ int main(int argc, char * argv[]) {
   struct sockaddr_in serv_addr;
   struct hostent * server;
   int active = 1;
+  int i;
   char player;
   
   char buffer[BUFFER_SIZE];
@@ -80,8 +82,8 @@ int main(int argc, char * argv[]) {
 
   portno = atoi(argv[1]);
 
-  // checking host
-  if (server == NULL) { error(" no nuch server ");}
+  // checking host (?)
+ // if (server == NULL) { error(" no nuch server ");}
 
 
 
@@ -111,7 +113,10 @@ int main(int argc, char * argv[]) {
   
   memset(buffer, 0, BUFFER_SIZE);
   recv_verif(sockfd, buffer);
-  printf("%s", buffer);
+  
+  for (i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
+      board[i] = buffer[i];
+  print_board(board);
     
   game(player, sockfd);
 

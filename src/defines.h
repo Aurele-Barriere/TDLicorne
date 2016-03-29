@@ -17,7 +17,7 @@
 
 
 
-#define BUFFER_SIZE 256
+#define BUFFER_SIZE 2000
 #define MAX_TRIES 200
 
 void error (char * msg);
