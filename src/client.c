@@ -160,7 +160,6 @@ int main(int argc, char * argv[]) {
   
   for (i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
       board[i] = buffer[i];
-  print_board(board);
     
   game_7colors(player, sockfd);
 
