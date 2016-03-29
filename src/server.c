@@ -81,7 +81,6 @@ void game_7colors(int sockfd1, int sockfd2)
 {
   // the 7 colors game
   int keep_playing = 1;
-  int gamestate = 21;
   int player = rand() % 2;
   int winner = 0;
   char choice;
@@ -123,6 +122,9 @@ void game_7colors(int sockfd1, int sockfd2)
     else {
       update_board(color2, choice, board);
     }
+    //updating score
+    score1 = score(board, color1);
+    score2 = score(board, color2);
 
     //checking end game condition
     // TO DO
