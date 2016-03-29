@@ -102,17 +102,18 @@ void game_7colors(int sockfd1, int sockfd2)
     else {
       recv_verif(sockfd2, buffer);
     }
-
+    
     choice = buffer[0];
-
+    printf("Player %d played color %c\n", player, choice);
     //rule checking
-    if (choice < 0 || choice >= NB_COLORS) {
+    if (choice < 'a' || choice >= 'a' + NB_COLORS) {
       choice = rand() % NB_COLORS;
+      printf("Wrong input, player has been assigned color %c\n", choice);
     }
     
     //updating game state
     if (player == 1) {
-      update_board(color1, choice, board);
+      update_board(color1, choice - 'a', board);
     }
     else {
       update_board(color2, choice, board);

@@ -11,6 +11,12 @@
 
 void game_7colors(int you, int sockfd) {
   printf("Beginning of game of 7 colors\n");
+  if (you == 1) {
+    printf("Your color is %c\n", color1+97);
+  }
+  else {
+    printf("Your color is %c", color2);
+  }
   int keep_playing = 1;
   char choice;
   char buffer [BUFFER_SIZE];
