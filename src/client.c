@@ -9,14 +9,11 @@
 
 #include "board.h"
 
-void game_7colors(int you, int sockfd) {
+void game_7colors(char you, int sockfd) {
   printf("Beginning of game of 7 colors\n");
-  if (you == 1) {
-    printf("Your color is %c\n", color1+97);
-  }
-  else {
-    printf("Your color is %c\n", color2+97);
-  }
+  
+  printf("Your color is %c\n", you);
+  
   int keep_playing = 1;
   char choice;
   char buffer [BUFFER_SIZE];
@@ -27,9 +24,9 @@ void game_7colors(int you, int sockfd) {
     memset(buffer, 0, BUFFER_SIZE);
     recv_verif(sockfd, buffer);
     for (i = 0; i < BOARD_SIZE*BOARD_SIZE; i++) {
-      board[i] = buffer[i];
+      board[i] = buffer[i+1];
     }
-    player = buffer[BOARD_SIZE*BOARD_SIZE];
+    player = buffer[0];
     
     //checking for end condition
     //TO DO
@@ -122,9 +119,9 @@ int init_client(const char* portno, const char* addr)
     serv_addr.sin_port = htons(atoi(portno));
 
     //connecting
-    if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
+    if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) 
         error(" connecting ");
-    }
+    
     
     return sockfd;
 }
@@ -157,11 +154,9 @@ int main(int argc, char * argv[]) {
 
   memset(buffer, 0 , BUFFER_SIZE);
   recv_verif(sockfd, buffer);
-  player = buffer[0] - '0';
-  printf("You are player number %d\n", player);
-  if (player == 1) {
-    printf("Waiting for other player...\n");
-  }
+  player = buffer[0];
+  printf("You are player %c\n", player);
+  printf("Waiting for other player...\n");
   
   memset(buffer, 0, BUFFER_SIZE);
   //recv_verif(sockfd, buffer);

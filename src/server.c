@@ -72,8 +72,8 @@ int main(int argc, char * argv[]) {
   listen(sockfd, 5);
 
   // waiting for clients to connect
-  sockfd1 = wait_player(sockfd, '1');
-  sockfd2 = wait_player(sockfd, '2');
+  sockfd1 = wait_player(sockfd, '^');
+  sockfd2 = wait_player(sockfd, '@');
   
   printf("both players connected\n");
   //all players are connected, starting game
@@ -87,20 +87,28 @@ int main(int argc, char * argv[]) {
  return 0;
 }
 
+void next_player(char* player)
+{
+    *player = (color1 + 97) + (color2 + 97) - *player;
+}
+
 void game_7colors(int sockfd1, int sockfd2)
 {
   // the 7 colors game
   printf("Starting game of 7 colors\n");
   int keep_playing = 1;
-  int player = rand() % 2;
+  char player = color1 + 97;
   int winner = 0;
   char choice;
   char buffer [BUFFER_SIZE];
   int score1 = 0;
   int score2 = 0;
   int i;
+  
 
   srand(time(NULL)); //initializing random
+  if (rand() % 2)
+      next_player(&player);
   
   set_sym_board(); //initializing board
 
@@ -110,14 +118,14 @@ void game_7colors(int sockfd1, int sockfd2)
     //sending board and player
     memset(buffer, 0, BUFFER_SIZE);
     for (i = 0; i < BOARD_SIZE*BOARD_SIZE; i++) {
-      buffer[i] = board[i];
+      buffer[i+1] = board[i];
     }
-    buffer[BOARD_SIZE*BOARD_SIZE] = player;
+    buffer[0] = player;
     send_to_both(buffer, sockfd1, sockfd2);
 
     //awaiting input from player
     memset(buffer, 0, BUFFER_SIZE);
-    if (player == 1) {
+    if (player == color1 + 97) {
       recv_verif(sockfd1, buffer);
     }
     else {
@@ -125,7 +133,7 @@ void game_7colors(int sockfd1, int sockfd2)
     }
     
     choice = buffer[0];
-    printf("Player %d played color %c\n", player, choice);
+    printf("Player %c played color %c\n", player, choice);
     //rule checking
     if (choice < 'a' || choice >= 'a' + NB_COLORS) {
       choice = rand() % NB_COLORS;
@@ -134,12 +142,8 @@ void game_7colors(int sockfd1, int sockfd2)
     }
     
     //updating game state
-    if (player == 1) {
-      update_board(color1, choice - 'a', board);
-    }
-    else {
-      update_board(color2, choice - 'a', board);
-    }
+    update_board(player - 97, choice - 'a', board);
+      
     //updating score
     score1 = score(board, color1);
     score2 = score(board, color2);
@@ -148,7 +152,7 @@ void game_7colors(int sockfd1, int sockfd2)
     // TO DO
 
     //changing player
-    player = 3 - player;
+    next_player(&player);
   }
 }
 void game(int sockfd1, int sockfd2) {
