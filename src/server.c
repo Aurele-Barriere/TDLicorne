@@ -5,6 +5,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <time.h>
+#include <SDL2/SDL.h>
+
 #include "network.h"
 #include "defines.h"
 
@@ -118,12 +120,23 @@ void game_7colors(int sockfd1, int sockfd2)
   int score2 = 0;
   int i;
   
+  
+    SDL_Init(SDL_INIT_EVERYTHING);
+    SDL_Window* window = SDL_CreateWindow("Les 7 merveilles du monde des 7 couleurs",SDL_WINDOWPOS_UNDEFINED,
+                                    SDL_WINDOWPOS_UNDEFINED,
+                                    600,
+                                    600,
+                                    SDL_WINDOW_SHOWN);
+
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+  
 
   srand(time(NULL)); //initializing random
   if (rand() % 2)
       next_player(&player);
   
   set_sym_board(); //initializing board
+  display_board(renderer, board);
 
   printf("The board has been generated :\n");
   print_board(board);
@@ -156,6 +169,7 @@ void game_7colors(int sockfd1, int sockfd2)
     
     //updating game state
     update_board(player - 97, choice - 'a', board);
+    display_board(renderer, board);
       
     //updating score
     score1 = score(board, color1);
@@ -184,4 +198,8 @@ void game_7colors(int sockfd1, int sockfd2)
     //changing player
     next_player(&player);
   }
+  
+  
+    SDL_DestroyWindow(window);
+    SDL_Quit();
 }

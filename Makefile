@@ -4,7 +4,7 @@ CXX  = gcc
 EXEC = server client observer
 
 CXXFLAGS = -W -Wall -Wextra -O3
-LDFLAGS  = 
+LDFLAGS  = -lSDL2-2.0
 
 SRC_DIR = src
 OBJ_DIR = out
