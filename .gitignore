@@ -4,3 +4,7 @@ client
 observer
 *~
 .directory
+*.out
+*.aux
+*.toc
+*.log
