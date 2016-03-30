@@ -1,7 +1,7 @@
 
 EXT  = c
 CXX  = gcc
-EXEC = server client
+EXEC = server client observer
 
 CXXFLAGS = -W -Wall -Wextra -O3
 LDFLAGS  = 
@@ -20,10 +20,13 @@ endif
 
 all:  $(EXEC)
 
-server : $(filter-out out/client.o, $(OBJ))
+server : $(filter-out out/client.o out/observer.o, $(OBJ))
 	$(CXX) -o $@ $^ $(LDFLAGS)
 
-client : $(filter-out out/server.o, $(OBJ))
+client : $(filter-out out/server.o out/observer.o, $(OBJ))
+	$(CXX) -o $@ $^ $(LDFLAGS)
+
+observer : $(filter-out out/server.o out/client.o, $(OBJ))
 	$(CXX) -o $@ $^ $(LDFLAGS)
 
 

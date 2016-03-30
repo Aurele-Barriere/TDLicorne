@@ -10,14 +10,14 @@
 #include "board.h"
 
 
-void game(int sockfd1, int sockfd2);
+void game(int sockfd1, int sockfd2, int sockfd3);
 void game_7colors(int sockfd1, int sockfd2);
 
 
 int main(int argc, char * argv[]) {
-  int sockfd, sockfd1, sockfd2, portno;
-  socklen_t clilen1, clilen2;
-  struct sockaddr_in cli1, cli2, serv_addr;
+  int sockfd, sockfd1, sockfd2, sockfd3, portno;
+  socklen_t clilen1, clilen2, obslen;
+  struct sockaddr_in cli1, cli2, obs, serv_addr;
   char buffer[BUFFER_SIZE];
   int active = 1;
 
@@ -45,8 +45,8 @@ int main(int argc, char * argv[]) {
   }
   
   // generating a new board
-  set_sym_board();
-  print_board(board);
+  // set_sym_board();
+  // print_board(board);
   
   
   
@@ -59,11 +59,19 @@ int main(int argc, char * argv[]) {
   memset(buffer, 0, BUFFER_SIZE);
   buffer[0] = '1';
   send_verif(sockfd1, buffer); // sending player id
+  
+  
   sockfd2 = accept(sockfd, (struct sockaddr *) &cli2, &clilen2);
   //player 2 is here
   memset(buffer, 0 , BUFFER_SIZE);
   buffer[0] = '2';
   send_verif(sockfd2, buffer); // sending player id
+  
+  
+  
+  
+  sockfd3 = accept(sockfd, (struct sockaddr *) &obs, &obslen);
+  
   
   //all players are connected, strating game
   game(sockfd1, sockfd2);
@@ -73,6 +81,7 @@ int main(int argc, char * argv[]) {
   close(sockfd);
   close(sockfd1);
   close(sockfd2);
+  close(sockfd3);
  return 0;
 }
 
@@ -81,12 +90,13 @@ void game_7colors(int sockfd1, int sockfd2)
     
 }
 
-void game(int sockfd1, int sockfd2) {
+void game(int sockfd1, int sockfd2, int sockfd3) {
   // for now, we implement a small version of the Marienbad game
   // for 7 colors, the steps should be the same
   // but we should encapsulate better game state
 
   send_to_both(board, sockfd1, sockfd2);
+  send_verif(sockfd3, board);
   int keep_playing = 1;
   int gamestate = 21;
   int player = 1;
