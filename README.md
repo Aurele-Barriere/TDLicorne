@@ -6,8 +6,6 @@ Implementing network for our previous game : 7colors
 
 #What's done?
 2 players can connect to a server, that launches the game.
-Right now, it's a little game of Marienbad.
-7 colors should follow the same sheme.
 
 #What has yet to be done?
 Change 7colors so it can be played online.

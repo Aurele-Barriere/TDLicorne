@@ -14,8 +14,27 @@
 
 
 
-void game(int sockfd1, int sockfd2);
 void game_7colors(int sockfd1, int sockfd2);
+
+/** Victory condition */
+int victory(int score1, int score2) {
+  int limit = (BOARD_SIZE*BOARD_SIZE)/2;
+  if (score1>limit || score2>limit) {
+    return 1;
+  }
+  return 0;
+}
+
+
+/** Draw condition */
+int draw(int score1, int score2) {
+  int limit = (BOARD_SIZE*BOARD_SIZE)/2;
+  if (score1 == limit && score2 == limit) {
+    return 1;
+  }
+  return 0;
+}
+
 
 
 int init_server(const char* portno)
@@ -48,19 +67,16 @@ int wait_player(int sockfd, char id)
     char buffer[BUFFER_SIZE];
         
     int sockfd1 = accept(sockfd, (struct sockaddr *) &cli, &clilen);
-    // player 1 is here
+    // player is here
     memset(buffer, 0, BUFFER_SIZE);
     buffer[0] = id;
     send_verif(sockfd1, buffer);
-    
     return sockfd1;
 }
 
 
 int main(int argc, char * argv[]) {
   int sockfd, sockfd1, sockfd2;
-  char buffer[BUFFER_SIZE];
-  int active = 1;
 
   // Checking port as argument
   if (argc != 2) {
@@ -73,7 +89,7 @@ int main(int argc, char * argv[]) {
   
   // listening
   listen(sockfd, 5);
-
+  
   // waiting for clients to connect
   sockfd1 = wait_player(sockfd, '^');
   sockfd2 = wait_player(sockfd, '@');
@@ -101,7 +117,6 @@ void game_7colors(int sockfd1, int sockfd2)
   printf("Starting game of 7 colors\n");
   int keep_playing = 1;
   char player = color1 + 97;
-  int winner = 0;
   char choice;
   char buffer [BUFFER_SIZE];
   int score1 = 0;
@@ -164,8 +179,24 @@ void game_7colors(int sockfd1, int sockfd2)
     score2 = score(board, color2);
 
     //checking end game condition
-    // TO DO
-
+    if (victory(score1, score2) || draw(score1, score2)) {
+      keep_playing = 0;
+      memset(buffer, 0, BUFFER_SIZE);
+      buffer[0] = '*';
+      if (score1>score2) {
+	buffer[1] = color1+97;
+	printf("Player 1 won!\n");
+      }
+      else if (score2>score1) {
+	buffer[1] = color2+97;
+	printf("Player 2 won!\n");
+      }
+      else {
+	buffer[1] = 0;
+	printf("Draw!\n");
+      }
+      send_to_both(buffer, sockfd1, sockfd2);
+    }
     //changing player
     next_player(&player);
   }
@@ -173,57 +204,4 @@ void game_7colors(int sockfd1, int sockfd2)
   
     SDL_DestroyWindow(window);
     SDL_Quit();
-}
-void game(int sockfd1, int sockfd2) {
-  // for now, we implement a small version of the Marienbad game
-  // for 7 colors, the steps should be the same
-  // but we should encapsulate better game state
-
-  send_to_both(board, sockfd1, sockfd2);
-  int keep_playing = 1;
-  int gamestate = 21;
-  int player = 1;
-  int winner = 0;
-  int choice;
-  char buffer [BUFFER_SIZE];
-  while (keep_playing) {
-    // sending gamestate and player
-    memset(buffer, 0, BUFFER_SIZE);
-    buffer[0] = gamestate; // we will send a special character when the game is over
-    buffer[1] = player;
-    
-    send_to_both(buffer, sockfd1, sockfd2);
-
-    // awaiting input from player
-    memset(buffer, 0, BUFFER_SIZE);
-    if (player == 1) {
-      recv_verif(sockfd1, buffer);
-    }
-    else {
-      recv_verif(sockfd2, buffer);
-    }
-
-    // updating game state
-    choice = buffer[0];
-    if (choice > 3 || choice < 1 || choice > gamestate-1) { choice = 1; } 
-    //rule checking must be done server-side 
-    //we're never sure of what code the client is running
-    gamestate -= choice;
-
-    //checking end condition
-    if (gamestate == 1) {
-      winner = player;
-      keep_playing = 0;
-    }
-
-    // changing player
-    player = 3-player;
-  }
-
-  // sending the result at the end of the game
-  memset(buffer, 0, BUFFER_SIZE);
-  buffer[0] = '\0';
-  buffer[1] = winner;
-  send_to_both(buffer, sockfd1, sockfd2);
-  
 }
