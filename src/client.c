@@ -50,60 +50,6 @@ void game_7colors(char you, int sockfd) {
   }
 }
 
-void game(int you, int sockfd) {
-  int keep_playing = 1;
-  int input;
-  char buffer [BUFFER_SIZE];
-  int player;
-  int gamestate;
-  int choice;
-  int i;
-  while(keep_playing) {
-    //receiving gamestate and player
-    memset(buffer, 0, BUFFER_SIZE);
-    recv_verif(sockfd, buffer);
-    
-    gamestate = buffer[0];
-    player = buffer[1];
-
-    //checking for the end of the game
-    if (gamestate == '\0') {
-      printf("The game is over\n");
-      keep_playing = 0;
-      if (player == you) {
-	printf(" You Won ! \n");
-      }
-      else {
-	printf (" You lost \n");
-      }
-      break;
-    }
-
-    //rendering
-    printf("\n");
-    for (i=0; i<gamestate; i++) {
-      printf(" | ");
-    }
-    printf("\n");
-
-    // asking for input if needed
-    if (player == you) {
-      printf("This is your turn !\nHow much do you want to take? (must be between 1-3)\n");
-      choice = getchar();
-      getchar();
-      choice -= '0';
-      memset(buffer, 0, BUFFER_SIZE);
-      buffer[0] = choice;
-      printf("Your choice is %d\n", choice);
-      send_verif(sockfd, buffer);
-    }
-    else {
-      printf("Your opponent is playing, please wait...\n");
-    }
-	    
-    
-  }
-}
 
 int init_client(const char* portno, const char* addr)
 {
