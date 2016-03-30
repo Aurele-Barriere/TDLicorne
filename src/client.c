@@ -49,6 +49,7 @@ void game_7colors(char you, int sockfd) {
     
     //asking for input if needed
     if (player == you) {
+      printf("Your color is %c\n", you);
       printf("This is your turn !\nWhat is your color?\n");
       choice = getchar();
       getchar();
@@ -87,8 +88,6 @@ int init_client(const char* portno, const char* addr)
 
 int main(int argc, char * argv[]) {
   int sockfd;
-  //struct hostent * server;
-  //int active = 1;
   int i;
   char player;
   
@@ -98,17 +97,10 @@ int main(int argc, char * argv[]) {
   if (argc != 3) {
     error("Usage : client <portno> <host>");
   }
-
-
-  // checking host (?)
- // if (server == NULL) { error(" no nuch server ");}
-
-
-
+  
   // Creating socket
   sockfd = init_client(argv[1], argv[2]);
   
-
   // sending / recieving
 
   memset(buffer, 0 , BUFFER_SIZE);
@@ -118,7 +110,6 @@ int main(int argc, char * argv[]) {
   printf("Waiting for other player...\n");
   
   memset(buffer, 0, BUFFER_SIZE);
-  //recv_verif(sockfd, buffer);
   
   for (i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
       board[i] = buffer[i];

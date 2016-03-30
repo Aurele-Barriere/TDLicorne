@@ -10,8 +10,6 @@
 
 #include "board.h"
 
-
-
 void game_7colors(int sockfd1, int sockfd2);
 
 /** Victory condition */
@@ -32,7 +30,6 @@ int draw(int score1, int score2) {
   }
   return 0;
 }
-
 
 
 int init_server(const char* portno)
@@ -182,6 +179,7 @@ void game_7colors(int sockfd1, int sockfd2)
 	printf("Draw!\n");
       }
       send_to_both(buffer, sockfd1, sockfd2);
+      print_board(board);
     }
     //changing player
     next_player(&player);
