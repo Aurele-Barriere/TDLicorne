@@ -1,3 +1,5 @@
+#include <sys/socket.h>
+
 /* 
    Networking functions
 */

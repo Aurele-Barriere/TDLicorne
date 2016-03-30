@@ -108,12 +108,31 @@ void game(int you, int sockfd) {
   }
 }
 
+int init_client(const char* portno, const char* addr)
+{
+    int sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    struct sockaddr_in serv_addr;
+    
+    if (sockfd < 0) 
+        error("creating socket");
+
+    // Configure serv_addr
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = inet_addr(addr);
+    serv_addr.sin_port = htons(atoi(portno));
+
+    //connecting
+    if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
+        error(" connecting ");
+    }
+    
+    return sockfd;
+}
 
 int main(int argc, char * argv[]) {
-  int sockfd, portno;
-  struct sockaddr_in serv_addr;
-  struct hostent * server;
-  int active = 1;
+  int sockfd;
+  //struct hostent * server;
+  //int active = 1;
   int i;
   char player;
   
@@ -124,7 +143,6 @@ int main(int argc, char * argv[]) {
     error("Usage : client <portno> <host>");
   }
 
-  portno = atoi(argv[1]);
 
   // checking host (?)
  // if (server == NULL) { error(" no nuch server ");}
@@ -132,18 +150,8 @@ int main(int argc, char * argv[]) {
 
 
   // Creating socket
-  sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-  if (sockfd < 0) {error("creating socket");}
-
- // Configure serv_addr
-  serv_addr.sin_family = AF_INET;
-  serv_addr.sin_addr.s_addr = inet_addr(argv[2]);
-  serv_addr.sin_port = htons(portno);
-
-  //connecting
-  if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-    error(" connecting ");
-  }
+  sockfd = init_client(argv[1], argv[2]);
+  
 
   // sending / recieving
 

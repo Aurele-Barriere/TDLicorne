@@ -15,10 +15,47 @@ void game(int sockfd1, int sockfd2);
 void game_7colors(int sockfd1, int sockfd2);
 
 
+int init_server(const char* portno)
+{
+    struct sockaddr_in serv_addr;
+    int sockfd;
+ 
+
+    // Creating socket
+    sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (sockfd < 0) {error("creating socket");}
+
+    // Configure serv_addr
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = INADDR_ANY;
+    serv_addr.sin_port = htons(atoi(portno));
+
+    // binding socket
+    if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr))< 0) {
+        error("binding");
+    }
+    
+    return sockfd;
+}
+
+int wait_player(int sockfd, char id)
+{
+    socklen_t clilen;
+    struct sockaddr_in cli;
+    char buffer[BUFFER_SIZE];
+        
+    int sockfd1 = accept(sockfd, (struct sockaddr *) &cli, &clilen);
+    // player 1 is here
+    memset(buffer, 0, BUFFER_SIZE);
+    buffer[0] = id;
+    send_verif(sockfd1, buffer);
+    
+    return sockfd1;
+}
+
+
 int main(int argc, char * argv[]) {
-  int sockfd, sockfd1, sockfd2, portno;
-  socklen_t clilen1, clilen2;
-  struct sockaddr_in cli1, cli2, serv_addr;
+  int sockfd, sockfd1, sockfd2;
   char buffer[BUFFER_SIZE];
   int active = 1;
 
@@ -27,38 +64,17 @@ int main(int argc, char * argv[]) {
     error("Usage : server <portno>");
   }
 
-  portno = atoi(argv[1]);
 
   // Creating socket
-  sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-  if (sockfd < 0) {error("creating socket");}
-
-  // Configure serv_addr
-  serv_addr.sin_family = AF_INET;
-  serv_addr.sin_addr.s_addr = INADDR_ANY;
-  serv_addr.sin_port = htons(portno);
-
-  // binding socket
-  if (
-      bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr))
-      < 0) {
-    error("binding");
-  }
+  sockfd = init_server(argv[1]);
   
   // listening
   listen(sockfd, 5);
 
   // waiting for clients to connect
-  sockfd1 = accept(sockfd, (struct sockaddr *) &cli1, &clilen1);
-  // player 1 is here
-  memset(buffer, 0, BUFFER_SIZE);
-  buffer[0] = '1';
-  send_verif(sockfd1, buffer); // sending player id
-  sockfd2 = accept(sockfd, (struct sockaddr *) &cli2, &clilen2);
-  //player 2 is here
-  memset(buffer, 0 , BUFFER_SIZE);
-  buffer[0] = '2';
-  send_verif(sockfd2, buffer); // sending player id
+  sockfd1 = wait_player(sockfd, '1');
+  sockfd2 = wait_player(sockfd, '2');
+  
   printf("both players connected\n");
   //all players are connected, starting game
   game_7colors(sockfd1, sockfd2);

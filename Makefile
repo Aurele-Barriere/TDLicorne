@@ -30,16 +30,16 @@ observer : $(filter-out out/server.o out/client.o, $(OBJ))
 	$(CXX) -o $@ $^ $(LDFLAGS)
 
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.$(EXT) $(SRC_DIR)/%.h $(SRC_DIR)/defines.h
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.$(EXT) $(wildcard $(SRC_DIR)/%.h) $(SRC_DIR)/defines.h
 	@mkdir -p $(OBJ_DIR)
 	$(CXX) -o $@ -c $< $(CXXFLAGS)
 
 
 	
-.PHONY: clean mrproper help newclass
+.PHONY: clean mrproper help newclass soupe_aux_choux
 
 soupe_aux_choux :
-	@cvlc data/soupe_aux_choux.mp3
+	@cvlc soupe_aux_choux.mp3
 	
 newclass :
 	@echo "#pragma once\n\n\nclass $(CLASS_N)\n{\n    public:\n        $(CLASS_N)();\n        ~$(CLASS_N)();\n\n    private:\n};" > src/$(FILE_N).h
@@ -54,7 +54,7 @@ mrproper : clean
 	@rm -rf $(EXEC)
 
 help:
-	@echo 'Makefile for project `Labyrinthe`'
+	@echo 'Makefile for project `7 colors`'
 	@echo ''
 	@echo 'Usage :'
 	@echo 'make                         Build project executable'
