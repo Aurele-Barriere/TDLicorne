@@ -8,13 +8,13 @@
 \usepackage{hyperref}
 
 
-\def\question#1{\subsection*{#1}}
+\def\question#1{\subsection{#1}}
 \def\sec#1{\section{#1}}
 
 \title{Communiquer et jouer en réseau}
 \author{Aurèle Barrière \& Rémi Hutin}
 \date{5 avril 2016}
-\setcounter{secnumdepth}{1} %for tableofcontents
+\setcounter{secnumdepth}{0} %for tableofcontents
 
 \begin{document}
 \maketitle
@@ -26,7 +26,7 @@ Nous avons utilisé le code issu de nos deux projets. Les fonctions de mise à j
 
 Le premier à l'avantage de ne considérer les couleurs que comme de caractères, qui s'envoient donc facilement par les \textit{sockets} TCP.
 
-Le second permet d'avoir, grâce à la SDL2 (\url{www.libsdl.org/index.php}), un affichage élaboré pour le client (qui permet aussi de recevoir les choix du joueur en cliquant simplement sur la couleur souhaitée).
+Le second permet d'avoir, grâce à la SDL2 (\url{www.libsdl.org}), un affichage élaboré pour le client (qui permet aussi de recevoir les choix du joueur en cliquant simplement sur la couleur souhaitée).
 
 %a ajouter : détails pour communiquer entre les deux projets, c'est toi qui t'es chatgé d'adapter ton code donc je te laisse faire
 
