@@ -117,7 +117,7 @@ void game_7colors(int sockfd1, int sockfd2)
       update_board(color1, choice - 'a', board);
     }
     else {
-      update_board(color2, choice, board);
+      update_board(color2, choice - 'a', board);
     }
     //updating score
     score1 = score(board, color1);
