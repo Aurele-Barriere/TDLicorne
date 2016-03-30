@@ -22,11 +22,39 @@
 
 \sec{Retransmisison des matchs en directs}
 \question{2.1}
+Nous avons utilisé le code issu de nos deux projets. Les fonctions de mise à jour du plateau et de calcul de score viennent d'un des projets, tandis que l'affichage côté client vient de l'autre.
+
+Le premier à l'avantage de ne considérer les couleurs que comme de caractères, qui s'envoient donc facilement par les \textit{sockets} TCP.
+
+Le second permet d'avoir, grâce à la SDL2 (\url{www.libsdl.org/index.php}), un affichage élaboré pour le client (qui permet aussi de recevoir les choix du joueur en cliquant simplement sur la couleur souhaitée).
+
+%a ajouter : détails pour communiquer entre les deux projets, c'est toi qui t'es chatgé d'adapter ton code donc je te laisse faire
+
+
+
 \question{2.2}
+On modifie ainsi le serveur. On commence par attendre une connection en acceptant sur un port (par exemple 7777).
+
+Ensuite, on garde l'identifiant de la \textit{scoket} crée après acceptation et on lance une partie.
+
+Au début, on envoie le plateau entier sur cette \textit{socket}, puis on envoie le coup joué et le numéro du joueur à chaque tour.
+
+Quand la partie est finie, on envoie à la place du prochain coup un signal de fin de partie.
+
+
 \question{2.3}
-\question{2.4}
-\question{2.5}
-\question{2.6}
+Ainsi, il suffit de créer un client qui suive le schéma suivant :
+\begin{itemize}
+\item On se connecte sur le port demandé (par exemple 7777, qui est non réservé).
+\item Tant qu'on a pas reçu un signal de fin de partie (par exemple, le premier caractère du buffer est le caractère spécial '*'), on reçoit sur la \textit{socket} utilisée pour la connection soit le plateau entier, soit le dernier coup joué et le numéro du joueur.
+\item Grâce aux fonctions de mise à jour et d'affichage, on retransmet la partie en cours.
+\end{itemize}
+
+  
+
+\question{2.4 (Bonus)}
+\question{2.5 (Bonus)}
+\question{2.6} %qu'est ce qu'ils veulent que je dise la sérieusement?
 
 \sec{Poste mono-client}
 \question{2.7}
