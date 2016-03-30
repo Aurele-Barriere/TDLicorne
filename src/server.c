@@ -9,6 +9,7 @@
 
 #include "network.h"
 #include "defines.h"
+#include "render.h"
 
 #include "board.h"
 

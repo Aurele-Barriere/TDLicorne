@@ -3,7 +3,6 @@
 
 void game(int you, int sockfd) {
   int keep_playing = 1;
-  int input;
   char buffer [BUFFER_SIZE];
   int player;
   int gamestate;
@@ -60,8 +59,6 @@ void game(int you, int sockfd) {
 int main(int argc, char * argv[]) {
   int sockfd, portno;
   struct sockaddr_in serv_addr;
-  struct hostent * server;
-  int active = 1;
   int i;
   char player;
   
@@ -73,11 +70,6 @@ int main(int argc, char * argv[]) {
   }
 
   portno = atoi(argv[1]);
-
-  // checking host (?)
- // if (server == NULL) { error(" no nuch server ");}
-
-
 
   // Creating socket
   sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
