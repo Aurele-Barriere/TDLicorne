@@ -9,6 +9,50 @@
 
 #include "board.h"
 
+void game_7colors(int you, int sockfd) {
+  printf("Beginning of game of 7 colors\n");
+  if (you == 1) {
+    printf("Your color is %c\n", color1+97);
+  }
+  else {
+    printf("Your color is %c\n", color2+97);
+  }
+  int keep_playing = 1;
+  char choice;
+  char buffer [BUFFER_SIZE];
+  int player;
+  int i;
+  while(keep_playing) {
+    //receiving game state and player
+    memset(buffer, 0, BUFFER_SIZE);
+    recv_verif(sockfd, buffer);
+    for (i = 0; i < BOARD_SIZE*BOARD_SIZE; i++) {
+      board[i] = buffer[i];
+    }
+    player = buffer[BOARD_SIZE*BOARD_SIZE];
+    
+    //checking for end condition
+    //TO DO
+    
+    //rendering
+    print_board(board);
+    
+    //asking for input if needed
+    if (player == you) {
+      printf("This is your turn !\nWhat is your color?\n");
+      choice = getchar();
+      getchar();
+      memset(buffer, 0, BUFFER_SIZE);
+      buffer[0] = choice;
+      printf("Your choice is %c\n", choice);
+      send_verif(sockfd, buffer);
+    }
+    else {
+      printf("Your opponent is playing, please wait...\n");
+    }    
+  }
+}
+
 void game(int you, int sockfd) {
   int keep_playing = 1;
   int input;
@@ -112,13 +156,12 @@ int main(int argc, char * argv[]) {
   }
   
   memset(buffer, 0, BUFFER_SIZE);
-  recv_verif(sockfd, buffer);
+  //recv_verif(sockfd, buffer);
   
   for (i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
       board[i] = buffer[i];
-  print_board(board);
     
-  game(player, sockfd);
+  game_7colors(player, sockfd);
 
   close(sockfd);
   return 0;

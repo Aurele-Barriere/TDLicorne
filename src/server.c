@@ -4,20 +4,21 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
 #include "network.h"
 #include "defines.h"
 
 #include "board.h"
 
 
-void game(int sockfd1, int sockfd2, int sockfd3);
+void game(int sockfd1, int sockfd2);
 void game_7colors(int sockfd1, int sockfd2);
 
 
 int main(int argc, char * argv[]) {
-  int sockfd, sockfd1, sockfd2, sockfd3, portno;
-  socklen_t clilen1, clilen2, obslen;
-  struct sockaddr_in cli1, cli2, obs, serv_addr;
+  int sockfd, sockfd1, sockfd2, portno;
+  socklen_t clilen1, clilen2;
+  struct sockaddr_in cli1, cli2, serv_addr;
   char buffer[BUFFER_SIZE];
   int active = 1;
 
@@ -44,12 +45,6 @@ int main(int argc, char * argv[]) {
     error("binding");
   }
   
-  // generating a new board
-  // set_sym_board();
-  // print_board(board);
-  
-  
-  
   // listening
   listen(sockfd, 5);
 
@@ -59,44 +54,93 @@ int main(int argc, char * argv[]) {
   memset(buffer, 0, BUFFER_SIZE);
   buffer[0] = '1';
   send_verif(sockfd1, buffer); // sending player id
-  
-  
   sockfd2 = accept(sockfd, (struct sockaddr *) &cli2, &clilen2);
   //player 2 is here
   memset(buffer, 0 , BUFFER_SIZE);
   buffer[0] = '2';
   send_verif(sockfd2, buffer); // sending player id
-  
-  
-  
-  
-  sockfd3 = accept(sockfd, (struct sockaddr *) &obs, &obslen);
-  
-  
-  //all players are connected, strating game
-  game(sockfd1, sockfd2);
+  printf("both players connected\n");
+  //all players are connected, starting game
+  game_7colors(sockfd1, sockfd2);
 
   //once everything is done
   printf("\n Server shutdown \n");
   close(sockfd);
   close(sockfd1);
   close(sockfd2);
-  close(sockfd3);
  return 0;
 }
 
 void game_7colors(int sockfd1, int sockfd2)
 {
-    
-}
+  // the 7 colors game
+  printf("Starting game of 7 colors\n");
+  int keep_playing = 1;
+  int player = rand() % 2;
+  int winner = 0;
+  char choice;
+  char buffer [BUFFER_SIZE];
+  int score1 = 0;
+  int score2 = 0;
+  int i;
 
-void game(int sockfd1, int sockfd2, int sockfd3) {
+  srand(time(NULL)); //initializing random
+  
+  set_sym_board(); //initializing board
+
+  printf("The board has been generated :\n");
+  print_board(board);
+  while(keep_playing) {
+    //sending board and player
+    memset(buffer, 0, BUFFER_SIZE);
+    for (i = 0; i < BOARD_SIZE*BOARD_SIZE; i++) {
+      buffer[i] = board[i];
+    }
+    buffer[BOARD_SIZE*BOARD_SIZE] = player;
+    send_to_both(buffer, sockfd1, sockfd2);
+
+    //awaiting input from player
+    memset(buffer, 0, BUFFER_SIZE);
+    if (player == 1) {
+      recv_verif(sockfd1, buffer);
+    }
+    else {
+      recv_verif(sockfd2, buffer);
+    }
+    
+    choice = buffer[0];
+    printf("Player %d played color %c\n", player, choice);
+    //rule checking
+    if (choice < 'a' || choice >= 'a' + NB_COLORS) {
+      choice = rand() % NB_COLORS;
+      choice += 'a';
+      printf("Wrong input, player has been assigned color %c\n", choice);
+    }
+    
+    //updating game state
+    if (player == 1) {
+      update_board(color1, choice - 'a', board);
+    }
+    else {
+      update_board(color2, choice - 'a', board);
+    }
+    //updating score
+    score1 = score(board, color1);
+    score2 = score(board, color2);
+
+    //checking end game condition
+    // TO DO
+
+    //changing player
+    player = 3 - player;
+  }
+}
+void game(int sockfd1, int sockfd2) {
   // for now, we implement a small version of the Marienbad game
   // for 7 colors, the steps should be the same
   // but we should encapsulate better game state
 
   send_to_both(board, sockfd1, sockfd2);
-  send_verif(sockfd3, board);
   int keep_playing = 1;
   int gamestate = 21;
   int player = 1;
