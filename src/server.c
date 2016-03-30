@@ -83,8 +83,13 @@ void game_7colors(int sockfd1, int sockfd2)
   int score1 = 0;
   int score2 = 0;
   int i;
+
+  srand(time(NULL)); //initializing random
   
   set_sym_board(); //initializing board
+
+  printf("The board has been generated :\n");
+  print_board(board);
   while(keep_playing) {
     //sending board and player
     memset(buffer, 0, BUFFER_SIZE);
