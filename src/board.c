@@ -11,7 +11,9 @@ char test_board[BOARD_SIZE * BOARD_SIZE] = { 0 };
 //get function. b points to a board
 char get_cell(int x, int y, char * b)
 {
-   return b[y*BOARD_SIZE + x];
+    if (x < 0 || y < 0 || x >= BOARD_SIZE || y >= BOARD_SIZE)
+        return -1;
+    return b[y*BOARD_SIZE + x];
 }
 
 //set function. b points to a board
