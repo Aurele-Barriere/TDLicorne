@@ -15,7 +15,7 @@ void game_7colors(int you, int sockfd) {
     printf("Your color is %c\n", color1+97);
   }
   else {
-    printf("Your color is %c", color2);
+    printf("Your color is %c\n", color2+97);
   }
   int keep_playing = 1;
   char choice;
