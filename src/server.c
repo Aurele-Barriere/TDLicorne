@@ -14,6 +14,26 @@
 
 void game_7colors(int sockfd1, int sockfd2);
 
+/** Victory condition */
+int victory(int score1, int score2) {
+  int limit = (BOARD_SIZE*BOARD_SIZE)/2;
+  if (score1>limit || score2>limit) {
+    return 1;
+  }
+  return 0;
+}
+
+
+/** Draw condition */
+int draw(int score1, int score2) {
+  int limit = (BOARD_SIZE*BOARD_SIZE)/2;
+  if (score1 == limit && score2 == limit) {
+    return 1;
+  }
+  return 0;
+}
+
+
 
 int init_server(const char* portno)
 {
@@ -45,11 +65,10 @@ int wait_player(int sockfd, char id)
     char buffer[BUFFER_SIZE];
         
     int sockfd1 = accept(sockfd, (struct sockaddr *) &cli, &clilen);
-    // player 1 is here
+    // player is here
     memset(buffer, 0, BUFFER_SIZE);
     buffer[0] = id;
     send_verif(sockfd1, buffer);
-    
     return sockfd1;
 }
 
@@ -70,7 +89,7 @@ int main(int argc, char * argv[]) {
   
   // listening
   listen(sockfd, 5);
-
+  
   // waiting for clients to connect
   sockfd1 = wait_player(sockfd, '^');
   sockfd2 = wait_player(sockfd, '@');
@@ -149,8 +168,21 @@ void game_7colors(int sockfd1, int sockfd2)
     score2 = score(board, color2);
 
     //checking end game condition
-    // TO DO
-
+    if (victory(score1, score2) || draw(score1, score2)) {
+      keep_playing = 0;
+      memset(buffer, 0, BUFFER_SIZE);
+      buffer[0] = '*';
+      if (score1>score2) {
+	buffer[1] = color1+97;
+      }
+      else if (score2>score1) {
+	buffer[1] = color2+97;
+      }
+      else {
+	buffer[1] = 0;
+      }
+      send_to_both(buffer, sockfd1, sockfd2);
+    }
     //changing player
     next_player(&player);
   }

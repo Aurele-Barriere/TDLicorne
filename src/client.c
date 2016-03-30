@@ -29,7 +29,20 @@ void game_7colors(char you, int sockfd) {
     player = buffer[0];
     
     //checking for end condition
-    //TO DO
+    if (buffer[0] == '*') {
+      keep_playing = 0;
+      player = buffer[1];
+      if (player == 0) {
+	printf("Draw !");
+      }
+      else if (player == you) {
+	printf("You Won !\n");
+      }
+      else {
+	printf("You Lose !\n");
+      }
+      break;
+    }
     
     //rendering
     print_board(board);
