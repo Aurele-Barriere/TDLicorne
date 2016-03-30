@@ -75,8 +75,6 @@ int wait_player(int sockfd, char id)
 
 int main(int argc, char * argv[]) {
   int sockfd, sockfd1, sockfd2;
-  char buffer[BUFFER_SIZE];
-  int active = 1;
 
   // Checking port as argument
   if (argc != 2) {
@@ -117,7 +115,6 @@ void game_7colors(int sockfd1, int sockfd2)
   printf("Starting game of 7 colors\n");
   int keep_playing = 1;
   char player = color1 + 97;
-  int winner = 0;
   char choice;
   char buffer [BUFFER_SIZE];
   int score1 = 0;
@@ -174,12 +171,15 @@ void game_7colors(int sockfd1, int sockfd2)
       buffer[0] = '*';
       if (score1>score2) {
 	buffer[1] = color1+97;
+	printf("Player 1 won!\n");
       }
       else if (score2>score1) {
 	buffer[1] = color2+97;
+	printf("Player 2 won!\n");
       }
       else {
 	buffer[1] = 0;
+	printf("Draw!\n");
       }
       send_to_both(buffer, sockfd1, sockfd2);
     }
