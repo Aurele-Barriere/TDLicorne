@@ -1,6 +1,8 @@
 #include "network.h"
 #include "defines.h"
 
+
+
 void send_verif(int sockfd, char * msg) {
   int sent = 0;
   int n = 0;

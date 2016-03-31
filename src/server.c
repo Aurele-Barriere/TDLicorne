@@ -13,7 +13,7 @@
 
 #include "board.h"
 
-void game_7colors(int sockfd1, int sockfd2);
+void game_7colors(int sockfd, int sockfd1, int sockfd2);
 
 /** Victory condition */
 int victory(int score1, int score2) {
@@ -73,6 +73,7 @@ int wait_player(int sockfd, char id)
 }
 
 
+
 int main(int argc, char * argv[]) {
   int sockfd, sockfd1, sockfd2;
 
@@ -86,7 +87,7 @@ int main(int argc, char * argv[]) {
   sockfd = init_server(argv[1]);
   
   // listening
-  listen(sockfd, 5);
+  listen(sockfd, 42);
   
   // waiting for clients to connect
   sockfd1 = wait_player(sockfd, '^');
@@ -94,7 +95,7 @@ int main(int argc, char * argv[]) {
   
   printf("both players connected\n");
   //all players are connected, starting game
-  game_7colors(sockfd1, sockfd2);
+  game_7colors(sockfd, sockfd1, sockfd2);
 
   //once everything is done
   printf("\n Server shutdown \n");
@@ -109,7 +110,7 @@ void next_player(char* player)
     *player = (color1 + 97) + (color2 + 97) - *player;
 }
 
-void game_7colors(int sockfd1, int sockfd2)
+void game_7colors(int sockfd, int sockfd1, int sockfd2)
 {
   // the 7 colors game
   printf("Starting game of 7 colors\n");
@@ -120,6 +121,11 @@ void game_7colors(int sockfd1, int sockfd2)
   int score1 = 0;
   int score2 = 0;
   int i;
+  
+  int sockfd_obs = -1;
+  
+  fd_set readfs;
+  struct timeval timeout;
   
   
 
@@ -132,6 +138,23 @@ void game_7colors(int sockfd1, int sockfd2)
   printf("The board has been generated :\n");
   print_board(board);
   while(keep_playing) {
+      
+    
+    // oberver connection
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
+    FD_ZERO(&readfs);
+    FD_SET(sockfd, &readfs);  
+    
+    if (select(sockfd + 1, &readfs, NULL, NULL, &timeout) > 0)
+    {
+        if(FD_ISSET(sockfd, &readfs))
+        {
+            sockfd_obs = wait_player(sockfd, 'o');
+            printf("An observer just connected\n");
+        }
+    }
+    
     //sending board and player
     memset(buffer, 0, BUFFER_SIZE);
     for (i = 0; i < BOARD_SIZE*BOARD_SIZE; i++) {
@@ -139,6 +162,9 @@ void game_7colors(int sockfd1, int sockfd2)
     }
     buffer[0] = player;
     send_to_both(buffer, sockfd1, sockfd2);
+    
+    if (sockfd_obs != -1)
+        send_verif(sockfd_obs, buffer);
 
     //awaiting input from player
     memset(buffer, 0, BUFFER_SIZE);
@@ -164,6 +190,11 @@ void game_7colors(int sockfd1, int sockfd2)
     //updating score
     score1 = score(board, color1);
     score2 = score(board, color2);
+    
+    
+    
+    
+    
 
     //checking end game condition
     if (victory(score1, score2) || draw(score1, score2)) {
@@ -185,6 +216,8 @@ void game_7colors(int sockfd1, int sockfd2)
       send_to_both(buffer, sockfd1, sockfd2);
       print_board(board);
     }
+    
+    
     //changing player
     next_player(&player);
   }

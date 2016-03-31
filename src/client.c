@@ -18,7 +18,7 @@ void game_7colors(char you, int sockfd) {
   
   printf("Your color is %c\n", you);
   
-  int keep_playing = 1;
+  bool keep_playing = TRUE;
   char choice;
   char buffer [BUFFER_SIZE];
   int player;
@@ -26,16 +26,33 @@ void game_7colors(char you, int sockfd) {
   
   
   
-    SDL_Init(SDL_INIT_EVERYTHING);
-    SDL_Window* window = SDL_CreateWindow("Les 7 merveilles du monde des 7 couleurs",SDL_WINDOWPOS_UNDEFINED,
+  SDL_Init(SDL_INIT_EVERYTHING);
+  SDL_Window* window = SDL_CreateWindow("Les 7 merveilles du monde des 7 couleurs",SDL_WINDOWPOS_UNDEFINED,
                                     SDL_WINDOWPOS_UNDEFINED,
                                     600,
                                     600,
                                     SDL_WINDOW_SHOWN);
 
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+  SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
   
-  while(keep_playing) {
+  SDL_Event event;
+    
+    
+  while(keep_playing) 
+  {
+      
+    while (SDL_PollEvent(&event))
+    {
+        switch (event.type)
+        {
+            case SDL_QUIT:
+                keep_playing = FALSE;
+                break;
+                
+        }
+    }
+    
+    
     //receiving game state and player
     memset(buffer, 0, BUFFER_SIZE);
     recv_verif(sockfd, buffer);
