@@ -122,7 +122,8 @@ void game_7colors(int sockfd, int sockfd1, int sockfd2)
   int score2 = 0;
   int i;
   
-  int sockfd_obs = -1;
+  int* sockfd_obs = NULL;
+  int nb_obs = 0;
   
   fd_set readfs;
   struct timeval timeout;
@@ -150,7 +151,9 @@ void game_7colors(int sockfd, int sockfd1, int sockfd2)
     {
         if(FD_ISSET(sockfd, &readfs))
         {
-            sockfd_obs = wait_player(sockfd, 'o');
+            nb_obs++;
+            sockfd_obs = (int*) realloc (sockfd_obs, nb_obs * sizeof(int));
+            sockfd_obs[nb_obs-1] = wait_player(sockfd, 'o');
             printf("An observer just connected\n");
         }
     }
@@ -163,8 +166,9 @@ void game_7colors(int sockfd, int sockfd1, int sockfd2)
     buffer[0] = player;
     send_to_both(buffer, sockfd1, sockfd2);
     
-    if (sockfd_obs != -1)
-        send_verif(sockfd_obs, buffer);
+    for (i = 0; i < nb_obs; i++)
+        send_verif(sockfd_obs[i], buffer);
+    
 
     //awaiting input from player
     memset(buffer, 0, BUFFER_SIZE);
@@ -222,4 +226,8 @@ void game_7colors(int sockfd, int sockfd1, int sockfd2)
     next_player(&player);
   }
   
+  
+    for (i = 0; i < nb_obs; i++)
+        close(sockfd_obs[i]);
+    free(sockfd_obs);
 }
