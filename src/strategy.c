@@ -86,7 +86,7 @@ char wrong_greedy(char player) {
 //ask for the player's choice
 char player_choice(char player) {
   char c;
-  printf("What color do you choose, player %c?\n", player+97);
+  printf("What color do you choose, player %c ?\n", player);
   printf("Must be between a-g  \n");
   c = getchar();
   getchar();

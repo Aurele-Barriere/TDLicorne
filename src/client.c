@@ -4,8 +4,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <SDL2/SDL.h>
+
 #include "network.h"
 #include "defines.h"
+#include "render.h"
+#include "strategy.h"
 
 #include "board.h"
 
@@ -19,6 +23,18 @@ void game_7colors(char you, int sockfd) {
   char buffer [BUFFER_SIZE];
   int player;
   int i;
+  
+  
+  
+    SDL_Init(SDL_INIT_EVERYTHING);
+    SDL_Window* window = SDL_CreateWindow("Les 7 merveilles du monde des 7 couleurs",SDL_WINDOWPOS_UNDEFINED,
+                                    SDL_WINDOWPOS_UNDEFINED,
+                                    600,
+                                    600,
+                                    SDL_WINDOW_SHOWN);
+
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+  
   while(keep_playing) {
     //receiving game state and player
     memset(buffer, 0, BUFFER_SIZE);
@@ -45,14 +61,13 @@ void game_7colors(char you, int sockfd) {
     }
     
     //rendering
-    print_board(board);
+    //print_board(board);
+    display_board(renderer, board);
     
     //asking for input if needed
-    if (player == you) {
-      printf("Your color is %c\n", you);
-      printf("This is your turn !\nWhat is your color?\n");
-      choice = getchar();
-      getchar();
+    if (player == you) 
+    {
+      choice = player_choice(you) + 'a';
       memset(buffer, 0, BUFFER_SIZE);
       buffer[0] = choice;
       printf("Your choice is %c\n", choice);
@@ -62,6 +77,9 @@ void game_7colors(char you, int sockfd) {
       printf("Your opponent is playing, please wait...\n");
     }    
   }
+  
+    SDL_DestroyWindow(window);
+    SDL_Quit();
 }
 
 
