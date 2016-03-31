@@ -8,7 +8,7 @@
 \usepackage{hyperref}
 
 
-\def\question#1{\subsection*{#1}}
+\def\question#1{\subsection{#1}}
 \def\sec#1{\section{#1}}
 
 \title{Communiquer et jouer en réseau}
@@ -19,7 +19,95 @@
 \begin{document}
 \maketitle
 \tableofcontents
-\newpage
+
+\sec{Retransmisison des matchs en directs}
+\question{2.1}
+Nous avons utilisé le code issu de nos deux projets. Les fonctions de mise à jour du plateau et de calcul de score viennent d'un des projets, tandis que l'affichage côté client vient de l'autre.
+
+Le premier à l'avantage de ne considérer les couleurs que comme de caractères, qui s'envoient donc facilement par les \textit{sockets} TCP.
+
+Le second permet d'avoir, grâce à la SDL2 (\url{www.libsdl.org}), un affichage élaboré pour le client (qui permet aussi de recevoir les choix du joueur en cliquant simplement sur la couleur souhaitée).
+
+%a ajouter : détails pour communiquer entre les deux projets, c'est toi qui t'es chatgé d'adapter ton code donc je te laisse faire
 
 
+
+\question{2.2}
+On modifie ainsi le serveur. On commence par attendre une connection en acceptant sur un port (par exemple 7777).
+
+Ensuite, on garde l'identifiant de la \textit{scoket} crée après acceptation et on lance une partie.
+
+Au début, on envoie le plateau entier sur cette \textit{socket}, puis on envoie le coup joué et le numéro du joueur à chaque tour.
+
+Quand la partie est finie, on envoie à la place du prochain coup un signal de fin de partie.
+
+
+\question{2.3}
+Ainsi, il suffit de créer un client qui suive le schéma suivant :
+\begin{itemize}
+\item On se connecte sur le port demandé (par exemple 7777, qui est non réservé).
+\item Tant qu'on a pas reçu un signal de fin de partie (par exemple, le premier caractère du buffer est le caractère spécial '*'), on reçoit sur la \textit{socket} utilisée pour la connection soit le plateau entier, soit le dernier coup joué et le numéro du joueur.
+\item Grâce aux fonctions de mise à jour et d'affichage, on retransmet la partie en cours.
+\end{itemize}
+
+  
+
+\question{2.4 (Bonus)}
+\question{2.5 (Bonus)}
+\question{2.6} %qu'est ce qu'ils veulent que je dise la sérieusement?
+
+\sec{Poste mono-client}
+\question{2.7}
+On pourrait modifier le serveur ainsi :
+\begin{itemize}
+  \item Acceptation des connections sur un certain port.
+  \item Création du plateau et initialisation du jeu.
+  \item Tant que la partie continue,
+  \item On envoie au client et aux observateurs l'état de la partie.
+  \item Si c'est au client de jouer, on attend son choix sur sa \textit{socket}.
+  \item Sinon, on joue comme d'habitude.
+  \item On met à jour l'état du jeu.
+  \item Quand la partie est finie, on envoie un signal de fin.
+\end{itemize}
+
+
+%à l'aide! je ne vois pas d'autre solution logique et simple
+
+
+\question{2.8}
+%du coup j'ai rien à dire ici pour le moment
+
+\question{2.9 (Bonus)}
+
+\question{2.10}
+Dans un premier temps, on se sert des valeurs de retour des fonctions \texttt{send()} et \texttt{recv()} pour vérifier qu'on a bien reçu un \textit{buffer} de la taille escomptée.
+Quand on a bien reçu, on renvoie un signal ('ACK') pour garantir à l'envoyeur qu'il peut continuer.
+
+Si ce n'est pas le cas lors de l'envoi ou de la réception avec un client, on consièrera au bout d'un certain nombre d'essais (défini dans une constante), que le joueur est déconnecté.
+
+Le serveur attribuera alors automatiquement la victoire au second joueur. %à faire!
+
+%et que faire quand c'est un observateur?
+
+\question{2.11}
+% que dire dans ces questions ?
+
+\sec{Compétition équitable}
+\question{2.12}
+\question{2.13 (Bonus)}
+
+\sec{Bonus}
+\question{Deux joueurs à distance}
+Nous avons souhaité séparer complètement les rôles des clients et du serveur.
+
+Ainsi, le serveur se contentera d'attendre la connection de 2 joueurs, de recevoir leur choix, de vérifier si ces choix correspondent aux règles du jeu (sinon, on attribuera une couleur aléatoire), de mettre à jour, et de diffuser (aux clients comme aux observateurs).
+
+Deux clients se chargeront donc de jouer à tour de rôle.
+
+Il n'y a que peu de modifications à faire dans le protocole : au lieu de jouer le coup du serveur, on écoutera sur une autres \textit{socket} le coup du second joueur.
+
+
+\sec{Protocole}
+% détailler le protocole de transmission des données :
+% send_verif et recv_verif, avec ACK ...
 \end{document}
