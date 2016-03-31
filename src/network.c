@@ -3,6 +3,52 @@
 
 
 
+int init_server(const char* portno)
+{
+    struct sockaddr_in serv_addr;
+    int sockfd;
+ 
+
+    // Creating socket
+    sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (sockfd < 0) 
+        error("creating socket");
+
+    // Configure serv_addr
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = INADDR_ANY;
+    serv_addr.sin_port = htons(atoi(portno));
+
+    // binding socket
+    if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr))< 0) 
+        error("binding");
+    
+    
+    return sockfd;
+}
+
+int init_client(const char* portno, const char* addr)
+{
+    int sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    struct sockaddr_in serv_addr;
+    
+    if (sockfd < 0) 
+        error("creating socket");
+
+    // Configure serv_addr
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = inet_addr(addr);
+    serv_addr.sin_port = htons(atoi(portno));
+
+    //connecting
+    if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) 
+        error(" connecting ");
+    
+    
+    return sockfd;
+}
+
+
 void send_verif(int sockfd, char * msg) {
   int sent = 0;
   int n = 0;
@@ -37,8 +83,6 @@ void send_to_both(char * msg, int sockfd1, int sockfd2) {
 }
 
 void error (char * msg) {
-  printf("\n error : ");
-  printf("%s",msg);
-  printf("\n");
+  printf("\n error : %s\n", msg);
   exit(1);
 }

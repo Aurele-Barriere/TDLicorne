@@ -2,51 +2,57 @@
 
 
 
-int main(int argc, char * argv[]) {
-  int sockfd, portno;
-  struct sockaddr_in serv_addr;
-  int i;
-  
-  char buffer[BUFFER_SIZE];
-
-  // Checking port and address as argument
-  if (argc != 3) {
-    error("Usage : observer <portno> <host>");
-  }
-
-  portno = atoi(argv[1]);
-
-  // Creating socket
-  sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-  if (sockfd < 0) {error("creating socket");}
-
- // Configure serv_addr
-  serv_addr.sin_family = AF_INET;
-  serv_addr.sin_addr.s_addr = inet_addr(argv[2]);
-  serv_addr.sin_port = htons(portno);
-
-  //connecting
-  if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-    error(" connecting ");
-  }
-
-  // sending / recieving  
-  memset(buffer, 0, BUFFER_SIZE);
-  recv_verif(sockfd, buffer);
-  if (buffer[0] != 'o')
-      error(" you are not an observer");
-  
-  
-  while(1)
-  {
-    memset(buffer, 0 , BUFFER_SIZE);
-    recv_verif(sockfd, buffer);
+int main(int argc, char * argv[]) 
+{
+    int sockfd;
+    bool keep_watching = TRUE;
     
-    for (i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
-        board[i] = buffer[i+1];
-    print_board(board);
-  }
+    char buffer[BUFFER_SIZE];
 
-  close(sockfd);
-  return 0;
+    // Checking port and address as argument
+    if (argc != 3) 
+        error("Usage : observer <portno> <host>");
+
+    
+    sockfd = init_client(argv[1], argv[2]);
+    printf("Waiting...\n");
+
+    // sending / recieving  
+    memset(buffer, 0, BUFFER_SIZE);
+    recv_verif(sockfd, buffer);
+    if (buffer[0] != 'o')
+        error("You are not an observer");
+  
+    printf("Successfully connected to the server.\n");
+  
+    SDL_Init(SDL_INIT_EVERYTHING);
+    SDL_Window* window = SDL_CreateWindow("7 colors : observer",SDL_WINDOWPOS_UNDEFINED,
+                                        SDL_WINDOWPOS_UNDEFINED,
+                                        600,
+                                        600,
+                                        SDL_WINDOW_SHOWN);
+    
+    
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    
+    SDL_Event event;
+  
+    while(keep_watching)
+    {
+        while (SDL_PollEvent(&event))
+        {
+            if(event.type == SDL_QUIT)
+                keep_watching = FALSE;
+        }
+        
+        memset(buffer, 0 , BUFFER_SIZE);
+        recv_verif(sockfd, buffer);
+        display_board(renderer, buffer+1);
+    }
+
+    close(sockfd);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+    
+    return 0;
 }

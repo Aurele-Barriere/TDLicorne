@@ -4,7 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <SDL2/SDL.h>
+
 #include "network.h"
 #include "defines.h"
-
-#include "board.h" 
+#include "render.h"

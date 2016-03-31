@@ -35,30 +35,8 @@ int draw(int score1, int score2) {
 }
 
 
-int init_server(const char* portno)
-{
-    struct sockaddr_in serv_addr;
-    int sockfd;
- 
 
-    // Creating socket
-    sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (sockfd < 0) {error("creating socket");}
-
-    // Configure serv_addr
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = INADDR_ANY;
-    serv_addr.sin_port = htons(atoi(portno));
-
-    // binding socket
-    if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr))< 0) {
-        error("binding");
-    }
-    
-    return sockfd;
-}
-
-int wait_player(int sockfd, char id)
+int wait_client(int sockfd, char id)
 {
     socklen_t clilen;
     struct sockaddr_in cli;
@@ -90,8 +68,8 @@ int main(int argc, char * argv[]) {
   listen(sockfd, 42);
   
   // waiting for clients to connect
-  sockfd1 = wait_player(sockfd, '^');
-  sockfd2 = wait_player(sockfd, '@');
+  sockfd1 = wait_client(sockfd, '^');
+  sockfd2 = wait_client(sockfd, '@');
   
   printf("both players connected\n");
   //all players are connected, starting game
@@ -142,8 +120,8 @@ void game_7colors(int sockfd, int sockfd1, int sockfd2)
       
     
     // oberver connection
-    timeout.tv_sec = 1;
-    timeout.tv_usec = 0;
+    timeout.tv_sec = 0;
+    timeout.tv_usec = 50000;
     FD_ZERO(&readfs);
     FD_SET(sockfd, &readfs);  
     
@@ -153,7 +131,7 @@ void game_7colors(int sockfd, int sockfd1, int sockfd2)
         {
             nb_obs++;
             sockfd_obs = (int*) realloc (sockfd_obs, nb_obs * sizeof(int));
-            sockfd_obs[nb_obs-1] = wait_player(sockfd, 'o');
+            sockfd_obs[nb_obs-1] = wait_client(sockfd, 'o');
             printf("An observer just connected\n");
         }
     }

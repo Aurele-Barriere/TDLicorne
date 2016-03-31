@@ -11,7 +11,6 @@
 #include "render.h"
 #include "strategy.h"
 
-#include "board.h"
 
 void game_7colors(char you, int sockfd) {
   printf("Beginning of game of 7 colors\n");
@@ -22,12 +21,11 @@ void game_7colors(char you, int sockfd) {
   char choice;
   char buffer [BUFFER_SIZE];
   int player;
-  int i;
   
   
   
   SDL_Init(SDL_INIT_EVERYTHING);
-  SDL_Window* window = SDL_CreateWindow("Les 7 merveilles du monde des 7 couleurs",SDL_WINDOWPOS_UNDEFINED,
+  SDL_Window* window = SDL_CreateWindow("7 colors : player", SDL_WINDOWPOS_UNDEFINED,
                                     SDL_WINDOWPOS_UNDEFINED,
                                     600,
                                     600,
@@ -56,9 +54,6 @@ void game_7colors(char you, int sockfd) {
     //receiving game state and player
     memset(buffer, 0, BUFFER_SIZE);
     recv_verif(sockfd, buffer);
-    for (i = 0; i < BOARD_SIZE*BOARD_SIZE; i++) {
-      board[i] = buffer[i+1];
-    }
     player = buffer[0];
     
     //checking for end condition
@@ -79,7 +74,7 @@ void game_7colors(char you, int sockfd) {
     
     //rendering
     //print_board(board);
-    display_board(renderer, board);
+    display_board(renderer, buffer+1);
     
     //asking for input if needed
     if (player == you) 
@@ -100,26 +95,6 @@ void game_7colors(char you, int sockfd) {
 }
 
 
-int init_client(const char* portno, const char* addr)
-{
-    int sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    struct sockaddr_in serv_addr;
-    
-    if (sockfd < 0) 
-        error("creating socket");
-
-    // Configure serv_addr
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = inet_addr(addr);
-    serv_addr.sin_port = htons(atoi(portno));
-
-    //connecting
-    if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) 
-        error(" connecting ");
-    
-    
-    return sockfd;
-}
 
 int main(int argc, char * argv[]) {
   int sockfd;
