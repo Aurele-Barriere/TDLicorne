@@ -6,8 +6,8 @@ int main(int argc, char * argv[])
 {
     int sockfd;
     bool keep_watching = TRUE;
-    
     char buffer[BUFFER_SIZE];
+    
 
     // Checking port and address as argument
     if (argc != 3) 
@@ -28,8 +28,8 @@ int main(int argc, char * argv[])
     SDL_Init(SDL_INIT_EVERYTHING);
     SDL_Window* window = SDL_CreateWindow("7 colors : observer",SDL_WINDOWPOS_UNDEFINED,
                                         SDL_WINDOWPOS_UNDEFINED,
-                                        600,
-                                        600,
+                                        WINDOW_WIDTH,
+                                        WINDOW_HEIGHT,
                                         SDL_WINDOW_SHOWN);
     
     
@@ -45,9 +45,13 @@ int main(int argc, char * argv[])
                 keep_watching = FALSE;
         }
         
-        memset(buffer, 0 , BUFFER_SIZE);
-        recv_verif(sockfd, buffer);
-        display_board(renderer, buffer+1);
+        
+        if(socket_ready(sockfd, 50))
+        {
+            memset(buffer, 0 , BUFFER_SIZE);
+            recv_verif(sockfd, buffer);
+            display_board(renderer, buffer+1);
+        }
     }
 
     close(sockfd);

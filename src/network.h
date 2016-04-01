@@ -19,3 +19,10 @@ void recv_verif(int sockfd, char * buffer);
 
 // Sends to both players (given the sockets)
 void send_to_both(char * msg, int sockfd1, int sockfd2);
+
+// Sends to n sockets
+void send_to_all(char * msg, int* sockfd, unsigned n);
+
+// Non blocking. Returns 1 if sockfd is ready for reading, 0 otherwise. 
+// timeout in ms
+int socket_ready(int sockfd, unsigned timeout_ms);

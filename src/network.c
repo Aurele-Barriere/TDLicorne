@@ -82,6 +82,31 @@ void send_to_both(char * msg, int sockfd1, int sockfd2) {
   send_verif(sockfd2, msg);
 }
 
+
+void send_to_all(char * msg, int* sockfd, unsigned n)
+{
+    unsigned i;
+    for (i = 0; i < n; i++)
+        send_verif(sockfd[i], msg);
+}
+
+int socket_ready(int sockfd, unsigned timeout_ms)
+{
+    fd_set readfs;
+    struct timeval timeout;
+    
+    timeout.tv_sec = 0; // 0s
+    timeout.tv_usec = timeout_ms * 1000; // to µs
+    
+    FD_ZERO(&readfs);
+    FD_SET(sockfd, &readfs);  
+    
+    if (select(sockfd + 1, &readfs, NULL, NULL, &timeout) > 0)
+        if(FD_ISSET(sockfd, &readfs))
+            return 1;
+    return 0;
+}
+
 void error (char * msg) {
   printf("\n error : %s\n", msg);
   exit(1);
