@@ -23,9 +23,37 @@ void game_7colors(char you, int sockfd)
     int player = 0;
     int winner = 0;
     
+    int choice_strat;
+    char (*strat)(char) = NULL;
     
-    memset(buffer, 0, BUFFER_SIZE);
     
+    
+    
+    printf("\nChoose second strategy :\n");
+    printf("  1. alea\n");
+    printf("  2. alea_useful_colors\n");
+    printf("  3. greedy\n");
+    printf("  4. hegemony\n");
+    printf("  5. starve\n");
+    printf("  6. greedymony (mixing greedy and hegemony)\n");
+    printf("  7. player_choice\n");
+    if(scanf("%d", &choice_strat) != 1)
+        choice_strat = 0;
+
+    switch (choice_strat) 
+    {
+        case 1: strat = alea; break;
+        case 2: strat = alea_useful_colors; break;
+        case 3: strat = greedy; break;
+        case 4: strat = hegemony; break;
+        case 5: strat = starve; break;
+        case 6: strat = greedymony; break;
+        case 7: strat = NULL; break;
+        default: 
+            strat = NULL;
+            printf("Invalid choice. You are a human player.\n\n");
+            break;
+    }
     
     
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -39,6 +67,9 @@ void game_7colors(char you, int sockfd)
     
     SDL_Event event;
         
+    
+    
+    memset(buffer, 0, BUFFER_SIZE);
         
     while(winner == 0) 
     {
@@ -51,7 +82,7 @@ void game_7colors(char you, int sockfd)
                     break;
                     
                 case SDL_MOUSEBUTTONDOWN:
-                    if (player == you) //asking for input if needed
+                    if (player == you && strat == NULL) //asking for input if needed
                     {
                         choice = get_cell(event.motion.x / (WINDOW_WIDTH / BOARD_SIZE),
                                           event.motion.y / (WINDOW_HEIGHT / BOARD_SIZE),
@@ -64,6 +95,16 @@ void game_7colors(char you, int sockfd)
                 default:
                     break;
             }
+        }
+        
+        // if non-human player
+        if (player == you && strat != NULL)
+        {
+            choice = strat(you);
+            memset(buffer, 0, BUFFER_SIZE);
+            buffer[0] = choice;
+            send_verif(sockfd, buffer);
+            player = 0;
         }
     
     
@@ -86,6 +127,8 @@ void game_7colors(char you, int sockfd)
         }
     }
   
+  
+    // end of game
     if (winner == -1) 
         printf("Draw !\n");
     else if (winner == you) 
