@@ -33,9 +33,9 @@ Le second permet d'avoir, grâce à la SDL2 (\url{www.libsdl.org}), un affichage
 
 
 \question{2.2}
-On modifie ainsi le serveur. On commence par attendre une connection en acceptant sur un port (par exemple 7777).
+On modifie ainsi le serveur. On commence par attendre une connexion en acceptant sur un port (par exemple 7777).
 
-Ensuite, on garde l'identifiant de la \textit{scoket} crée après acceptation et on lance une partie.
+Ensuite, on garde l'identifiant de la \textit{socket} créée après acceptation et on lance une partie.
 
 Au début, on envoie le plateau entier sur cette \textit{socket}, puis on envoie le coup joué et le numéro du joueur à chaque tour.
 
@@ -46,7 +46,7 @@ Quand la partie est finie, on envoie à la place du prochain coup un signal de f
 Ainsi, il suffit de créer un client qui suive le schéma suivant :
 \begin{itemize}
 \item On se connecte sur le port demandé (par exemple 7777, qui est non réservé).
-\item Tant qu'on a pas reçu un signal de fin de partie (par exemple, le premier caractère du buffer est le caractère spécial '*'), on reçoit sur la \textit{socket} utilisée pour la connection soit le plateau entier, soit le dernier coup joué et le numéro du joueur.
+\item Tant qu'on a pas reçu un signal de fin de partie (par exemple, le premier caractère du buffer est le caractère spécial '*'), on reçoit sur la \textit{socket} utilisée pour la connexion soit le plateau entier, soit le dernier coup joué et le numéro du joueur.
 \item Grâce aux fonctions de mise à jour et d'affichage, on retransmet la partie en cours.
 \end{itemize}
 
@@ -60,7 +60,7 @@ Ainsi, il suffit de créer un client qui suive le schéma suivant :
 \question{2.7}
 On pourrait modifier le serveur ainsi :
 \begin{itemize}
-  \item Acceptation des connections sur un certain port.
+  \item Acceptation des connexions sur un certain port.
   \item Création du plateau et initialisation du jeu.
   \item Tant que la partie continue,
   \item On envoie au client et aux observateurs l'état de la partie.
@@ -83,7 +83,7 @@ On pourrait modifier le serveur ainsi :
 Dans un premier temps, on se sert des valeurs de retour des fonctions \texttt{send()} et \texttt{recv()} pour vérifier qu'on a bien reçu un \textit{buffer} de la taille escomptée.
 Quand on a bien reçu, on renvoie un signal ('ACK') pour garantir à l'envoyeur qu'il peut continuer.
 
-Si ce n'est pas le cas lors de l'envoi ou de la réception avec un client, on consièrera au bout d'un certain nombre d'essais (défini dans une constante), que le joueur est déconnecté.
+Si ce n'est pas le cas lors de l'envoi ou de la réception avec un client, on considèrera au bout d'un certain nombre d'essais (défini dans une constante), que le joueur est déconnecté.
 
 Le serveur attribuera alors automatiquement la victoire au second joueur. %à faire!
 
@@ -100,11 +100,11 @@ Le serveur attribuera alors automatiquement la victoire au second joueur. %à fa
 \question{Deux joueurs à distance}
 Nous avons souhaité séparer complètement les rôles des clients et du serveur.
 
-Ainsi, le serveur se contentera d'attendre la connection de 2 joueurs, de recevoir leur choix, de vérifier si ces choix correspondent aux règles du jeu (sinon, on attribuera une couleur aléatoire), de mettre à jour, et de diffuser (aux clients comme aux observateurs).
+Ainsi, le serveur se contentera d'attendre la connexion de 2 joueurs, de recevoir leur choix, de vérifier si ces choix correspondent aux règles du jeu (sinon, on attribuera une couleur aléatoire), de mettre à jour, et de diffuser (aux clients comme aux observateurs).
 
 Deux clients se chargeront donc de jouer à tour de rôle.
 
-Il n'y a que peu de modifications à faire dans le protocole : au lieu de jouer le coup du serveur, on écoutera sur une autres \textit{socket} le coup du second joueur.
+Il n'y a que peu de modifications à faire dans le protocole : au lieu de jouer le coup du serveur, on écoutera sur une autre \textit{socket} le coup du second joueur.
 
 
 \sec{Protocole}
