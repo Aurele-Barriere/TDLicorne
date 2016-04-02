@@ -14,16 +14,11 @@ int main(int argc, char * argv[])
         error("Usage : observer <portno> <host>");
 
     
-    sockfd = init_client(argv[1], argv[2]);
     printf("Waiting...\n");
+    sockfd = init_client(argv[1], argv[2], 'o');
 
-    // sending / recieving  
-    memset(buffer, 0, BUFFER_SIZE);
-    recv_verif(sockfd, buffer);
-    if (buffer[0] != 'o')
-        error("You are not an observer");
   
-    printf("Successfully connected to the server.\n");
+    printf("Successfully connected to the server.\n\n");
   
     SDL_Init(SDL_INIT_EVERYTHING);
     SDL_Window* window = SDL_CreateWindow("7 colors : observer",SDL_WINDOWPOS_UNDEFINED,
@@ -55,6 +50,9 @@ int main(int argc, char * argv[])
     }
 
     close(sockfd);
+    
+    SDL_Delay(1000);
+    
     SDL_DestroyWindow(window);
     SDL_Quit();
     

@@ -42,13 +42,12 @@ void game_7colors(char you, int sockfd)
         
     while(winner == 0) 
     {
-      
         while (SDL_PollEvent(&event))
         {
             switch (event.type)
             {
                 case SDL_QUIT:
-                    keep_playing = FALSE;
+                    winner = -1;
                     break;
                     
                 case SDL_MOUSEBUTTONDOWN:
@@ -88,12 +87,14 @@ void game_7colors(char you, int sockfd)
     }
   
     if (winner == -1) 
-        printf("Draw !");
+        printf("Draw !\n");
     else if (winner == you) 
         printf("You Won !\n");
     else 
         printf("You Lose !\n");
   
+    SDL_Delay(1000);
+    
     SDL_DestroyWindow(window);
     SDL_Quit();
 }
@@ -112,7 +113,7 @@ int main(int argc, char * argv[]) {
   }
   
   // Creating socket
-  sockfd = init_client(argv[1], argv[2]);
+  sockfd = init_client(argv[1], argv[2], 'p');
   
   // sending / recieving
 

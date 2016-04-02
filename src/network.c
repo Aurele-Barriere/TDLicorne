@@ -1,5 +1,4 @@
 #include "network.h"
-#include "defines.h"
 
 
 
@@ -27,7 +26,7 @@ int init_server(const char* portno)
     return sockfd;
 }
 
-int init_client(const char* portno, const char* addr)
+int init_client(const char* portno, const char* addr, char type)
 {
     int sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     struct sockaddr_in serv_addr;
@@ -44,6 +43,7 @@ int init_client(const char* portno, const char* addr)
     if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) 
         error(" connecting ");
     
+    send_char(sockfd, type);
     
     return sockfd;
 }
@@ -77,18 +77,23 @@ void recv_verif(int sockfd, char * buffer) {
   }
 }
 
-void send_to_both(char * msg, int sockfd1, int sockfd2) {
-  send_verif(sockfd1, msg);
-  send_verif(sockfd2, msg);
-}
-
-
 void send_to_all(char * msg, int* sockfd, unsigned n)
 {
     unsigned i;
     for (i = 0; i < n; i++)
         send_verif(sockfd[i], msg);
 }
+
+void send_char(int sockfd, char msg)
+{
+    char buffer[BUFFER_SIZE];
+    
+    memset(buffer, 0 , BUFFER_SIZE);
+    buffer[0] = msg;
+    
+    send_verif(sockfd, buffer);
+}
+
 
 int socket_ready(int sockfd, unsigned timeout_ms)
 {
