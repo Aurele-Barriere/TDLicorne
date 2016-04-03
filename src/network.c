@@ -77,12 +77,6 @@ void recv_verif(int sockfd, char * buffer) {
   }
 }
 
-void send_to_all(char * msg, int* sockfd, unsigned n)
-{
-    unsigned i;
-    for (i = 0; i < n; i++)
-        send_verif(sockfd[i], msg);
-}
 
 void send_char(int sockfd, char msg)
 {
@@ -112,7 +106,56 @@ int socket_ready(int sockfd, unsigned timeout_ms)
     return 0;
 }
 
+
+int wait_client(int sockfd)
+{
+    socklen_t clilen;
+    struct sockaddr_in cli;
+        
+    int sockfd1 = accept(sockfd, (struct sockaddr *) &cli, &clilen);
+    
+        
+    return sockfd1;
+}
+
+
 void error (char * msg) {
   printf("\n error : %s\n", msg);
   exit(1);
 }
+
+
+
+
+
+
+
+
+struct client_set client_set_init()
+{
+    struct client_set set = {NULL, 0};
+    return set;
+}
+
+void client_set_add(struct client_set* set, int sockfd)
+{
+    set->nb++;
+    set->sockfd = (int*) realloc(set->sockfd, set->nb * sizeof(int));
+    set->sockfd[set->nb-1] = sockfd;
+}
+
+void client_set_send(struct client_set set, char* msg)
+{
+    unsigned i;
+    for (i = 0; i < set.nb; i++)
+        send_verif(set.sockfd[i], msg);
+}
+
+void client_set_close(struct client_set set)
+{
+    unsigned i;
+    for (i = 0; i < set.nb; i++)
+        close(set.sockfd[i]);
+    free(set.sockfd);
+}
+

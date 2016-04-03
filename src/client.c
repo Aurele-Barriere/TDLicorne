@@ -121,17 +121,21 @@ void game_7colors(char you, int sockfd)
             for(i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
                 board[i] = buffer[i+1];
             
-            display_board(renderer, board);
             
             
             //checking for end condition :
             // if buffer[0] == '*', the game is over, and buffer[1] contains the winner
             if (buffer[0] == '*') 
                 winner = buffer[1];
-            else if (player == you) //asking for input if needed
-                printf("It is your turn !\n");
             else 
-                printf("Your opponent is playing, please wait...\n");
+            {
+                if (player == you) //asking for input if needed
+                    printf("It is your turn !\n");
+                else 
+                    printf("Your opponent is playing, please wait...\n");
+                
+                display_board(renderer, board); 
+            }
         }
     }
   

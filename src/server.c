@@ -31,34 +31,16 @@ int game_over(char* board)
 }
 
 
-int wait_client(int sockfd)
-{
-    socklen_t clilen;
-    struct sockaddr_in cli;
-        
-    int sockfd1 = accept(sockfd, (struct sockaddr *) &cli, &clilen);
-    
-        
-    return sockfd1;
-}
-
-void add_client(int sockfd, int** sockfd_tab, int* nb)
-{
-    (*nb)++;
-    (*sockfd_tab) = (int*) realloc (*sockfd_tab, (*nb) * sizeof(int));
-    (*sockfd_tab)[(*nb)-1] = sockfd;
-}
-
 
 
 
 int main(int argc, char * argv[]) {
-  int sockfd, sockfd_cli[2];
+  int sockfd;
 
   // Checking port as argument
-  if (argc != 2) {
-    error("Usage : server <portno>");
-  }
+  if (argc != 2) 
+      error("Usage : server <portno>");
+  
 
 
   // Creating socket
@@ -67,20 +49,13 @@ int main(int argc, char * argv[]) {
   // listening
   listen(sockfd, 42);
   
-  // waiting for clients to connect
-  //sockfd_cli[0] = wait_client(sockfd, '^');
-  //sockfd_cli[1] = wait_client(sockfd, '@');
-  
-  //printf("both players connected\n");
-  //all players are connected, starting game
+  // strating the game
   game_7colors(sockfd);
 
   //once everything is done
-  printf("\n Server shutdown \n");
+  printf("\nServer shutdown \n");
   close(sockfd);
-  close(sockfd_cli[0]);
-  close(sockfd_cli[1]);
- return 0;
+  return 0;
 }
 
 void next_player(char* player)
@@ -100,14 +75,13 @@ void game_7colors(int sockfd)
     
     int sock;
     
-    int* sockfd_cli = NULL;
-    int nb_cli = 0;
-    const int MAX_PLAYER = 2;
+    const unsigned MAX_PLAYER = 2;
     
-    int* sockfd_obs = NULL;
-    int nb_obs = 0;
     
-    char player[] = {'^', '@'};
+    struct client_set player = client_set_init();
+    struct client_set obs = client_set_init();
+    
+    char symbols[] = {'^', '@'};
     int current_player = rand() % 2;
     
     bool send_board = FALSE;
@@ -117,7 +91,7 @@ void game_7colors(int sockfd)
     printf("The board has been generated.\n\n");
     
     printf("Waiting for players to connect.\n");
-    printf("%d more players required !\n\n", MAX_PLAYER - nb_cli);
+    printf("%d more players required !\n\n", MAX_PLAYER - player.nb);
     
     while(!(winner = game_over(board))) 
     {       
@@ -136,26 +110,21 @@ void game_7colors(int sockfd)
             {
                 case 'p': // player
                     printf("A new player tried to connect\n");
-                    if (nb_cli < MAX_PLAYER)
+                    if (player.nb < MAX_PLAYER)
                     {
-                        /*
-                        nb_cli++;
-                        sockfd_cli = (int*) realloc (sockfd_cli, nb_cli * sizeof(int));
-                        sockfd_cli[nb_cli-1] = sock;
-                        */
-                        add_client(sock, &sockfd_cli, &nb_cli);
+                        client_set_add(&player, sock);
                         
-                        send_char(sock, player[nb_cli-1]);
-                        printf("Player %c successfully connected !\n", player[nb_cli-1]);  
+                        send_char(sock, symbols[player.nb-1]);
+                        printf("Player %c successfully connected !\n", symbols[player.nb-1]);  
                         
-                        if (nb_cli == MAX_PLAYER)
+                        if (player.nb == MAX_PLAYER)
                         {
                             printf("All the player are connected... Let's start the game !\n\n");
                             send_board = TRUE;
                         }
                         else
                         {
-                            printf("%d more players required !\n\n", MAX_PLAYER - nb_cli);
+                            printf("%d more players required !\n\n", MAX_PLAYER - player.nb);
                         }
                     }
                     else
@@ -165,14 +134,8 @@ void game_7colors(int sockfd)
 
                     break;
                 case 'o': // observer
-                    printf("A new observer tried to connect\n");
-                    /*
-                    nb_obs++;
-                    sockfd_obs = (int*) realloc (sockfd_obs, nb_obs * sizeof(int));
-                    sockfd_obs[nb_obs-1] = sock;    
-                    */
-                
-                    add_client(sock, &sockfd_obs, &nb_obs);
+                    printf("A new observer tried to connect\n");     
+                    client_set_add(&obs, sock);
                     printf("Observer successfully connected !\n\n");            
                     break;
                 default:
@@ -188,28 +151,28 @@ void game_7colors(int sockfd)
         {
             memset(buffer, 0, BUFFER_SIZE);
             
-            buffer[0] = player[current_player];
+            buffer[0] = symbols[current_player];
             for (i = 0; i < BOARD_SIZE*BOARD_SIZE; i++) 
                 buffer[i+1] = board[i];
             
             
-            send_to_all(buffer, sockfd_cli, nb_cli);
-            send_to_all(buffer, sockfd_obs, nb_obs);
+            client_set_send(player, buffer);
+            client_set_send(obs, buffer);
             
             send_board = FALSE;
         }
         
 
         //awaiting input from player
-        if(nb_cli == MAX_PLAYER && socket_ready(sockfd_cli[current_player], 50))
+        if(player.nb == MAX_PLAYER && socket_ready(player.sockfd[current_player], 50))
         {
             memset(buffer, 0, BUFFER_SIZE);
-            recv_verif(sockfd_cli[current_player], buffer);
+            recv_verif(player.sockfd[current_player], buffer);
             
             
             
             choice = buffer[0];
-            printf("Player %c played color %c\n", player[current_player], choice);
+            printf("Player %c played color %c\n", symbols[current_player], choice);
             //rule checking
             if (choice < 'a' || choice >= 'a' + NB_COLORS) 
             {
@@ -219,11 +182,11 @@ void game_7colors(int sockfd)
             }
             
             //updating game state
-            update_board(player[current_player] - 'a', choice - 'a', board);
+            update_board(symbols[current_player] - 'a', choice - 'a', board);
             
             
             //changing player
-            current_player = (current_player + 1) % nb_cli;
+            current_player = (current_player + 1) % player.nb;
             
             send_board = TRUE;
         }
@@ -243,9 +206,9 @@ void game_7colors(int sockfd)
         printf("Player %c won !\n", winner);
   
 
-    send_to_all(buffer, sockfd_cli, 2);
-  
-    for (i = 0; i < nb_obs; i++)
-        close(sockfd_obs[i]);
-    free(sockfd_obs);
+    client_set_send(player, buffer);
+    
+    
+    client_set_close(player);
+    client_set_close(obs);
 }
