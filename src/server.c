@@ -30,26 +30,6 @@ int game_over(char* board)
     return 0;
 }
 
-/** Victory condition */
-int victory(int score1, int score2) {
-  int limit = (BOARD_SIZE*BOARD_SIZE)/2;
-  if (score1>limit || score2>limit) {
-    return 1;
-  }
-  return 0;
-}
-
-
-/** Draw condition */
-int draw(int score1, int score2) {
-  int limit = (BOARD_SIZE*BOARD_SIZE)/2;
-  if (score1 == limit && score2 == limit) {
-    return 1;
-  }
-  return 0;
-}
-
-
 
 int wait_client(int sockfd)
 {
@@ -61,6 +41,14 @@ int wait_client(int sockfd)
         
     return sockfd1;
 }
+
+void add_client(int sockfd, int** sockfd_tab, int* nb)
+{
+    (*nb)++;
+    (*sockfd_tab) = (int*) realloc (*sockfd_tab, (*nb) * sizeof(int));
+    (*sockfd_tab)[(*nb)-1] = sockfd;
+}
+
 
 
 
@@ -150,9 +138,12 @@ void game_7colors(int sockfd)
                     printf("A new player tried to connect\n");
                     if (nb_cli < MAX_PLAYER)
                     {
+                        /*
                         nb_cli++;
                         sockfd_cli = (int*) realloc (sockfd_cli, nb_cli * sizeof(int));
                         sockfd_cli[nb_cli-1] = sock;
+                        */
+                        add_client(sock, &sockfd_cli, &nb_cli);
                         
                         send_char(sock, player[nb_cli-1]);
                         printf("Player %c successfully connected !\n", player[nb_cli-1]);  
@@ -175,9 +166,13 @@ void game_7colors(int sockfd)
                     break;
                 case 'o': // observer
                     printf("A new observer tried to connect\n");
+                    /*
                     nb_obs++;
                     sockfd_obs = (int*) realloc (sockfd_obs, nb_obs * sizeof(int));
                     sockfd_obs[nb_obs-1] = sock;    
+                    */
+                
+                    add_client(sock, &sockfd_obs, &nb_obs);
                     printf("Observer successfully connected !\n\n");            
                     break;
                 default:
@@ -228,7 +223,7 @@ void game_7colors(int sockfd)
             
             
             //changing player
-            current_player = (current_player + 1) % 2;
+            current_player = (current_player + 1) % nb_cli;
             
             send_board = TRUE;
         }

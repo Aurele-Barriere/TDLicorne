@@ -9,6 +9,7 @@
 #include "network.h"
 #include "defines.h"
 #include "render.h"
+#include "board.h"
 #include "strategy.h"
 
 
@@ -22,6 +23,7 @@ void game_7colors(char you, int sockfd)
     char buffer [BUFFER_SIZE];
     int player = 0;
     int winner = 0;
+    int i;
     
     int choice_strat;
     char (*strat)(char) = NULL;
@@ -86,7 +88,7 @@ void game_7colors(char you, int sockfd)
                     {
                         choice = get_cell(event.motion.x / (WINDOW_WIDTH / BOARD_SIZE),
                                           event.motion.y / (WINDOW_HEIGHT / BOARD_SIZE),
-                                          buffer+1) + 'a';
+                                          board) + 'a';
                         memset(buffer, 0, BUFFER_SIZE);
                         buffer[0] = choice;
                         send_verif(sockfd, buffer);
@@ -113,9 +115,15 @@ void game_7colors(char you, int sockfd)
         {
             memset(buffer, 0 , BUFFER_SIZE);
             recv_verif(sockfd, buffer);
-            display_board(renderer, buffer+1);
             
             player = buffer[0];
+            
+            for(i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
+                board[i] = buffer[i+1];
+            
+            display_board(renderer, board);
+            
+            
             //checking for end condition :
             // if buffer[0] == '*', the game is over, and buffer[1] contains the winner
             if (buffer[0] == '*') 
