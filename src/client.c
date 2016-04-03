@@ -100,7 +100,7 @@ void game_7colors(char you, int sockfd)
         // if non-human player
         if (player == you && strat != NULL)
         {
-            choice = strat(you);
+            choice = strat(you) + 'a';
             memset(buffer, 0, BUFFER_SIZE);
             buffer[0] = choice;
             send_verif(sockfd, buffer);
