@@ -110,6 +110,8 @@ char maximize(int (*f) (char *, char), char player) {
     update_board(player, i, test_board);
     val[i] = f(test_board, player);
   }
+  
+  
   //choosing only from useful colors
   int useful[NB_COLORS] = { 0 };
 
