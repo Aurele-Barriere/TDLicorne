@@ -76,7 +76,10 @@ Pour résoudre ce problème, il a fallu décaler les indices de couleurs en ajou
 
 \sec{Poste mono-client}
 \question{2.7}
-On pourrait modifier le serveur ainsi :
+Une première solution serait d'envoyer le plateau au client joueur, que celui choisisse son coup, qu'il calcule le résultat puis l'envoie au serveur en envoyant le plateau entier mis à jour.
+
+
+On pourrait également modifier le serveur ainsi :
 \begin{itemize}
   \item Acceptation des connexions sur un certain port.
   \item Création du plateau et initialisation du jeu.
@@ -89,11 +92,16 @@ On pourrait modifier le serveur ainsi :
 \end{itemize}
 
 
-%à l'aide! je ne vois pas d'autre solution logique et simple
+La première solution, bien que facilement implémentable, soulève plusieurs problèmes :
+\begin{itemize}
+\item Pour les observateurs, nous avions laissé le calcul au serveur. Pourquoi ne pas faire de même pour les joueurs?
+\item On ne peut pas être sûr du code exécuté par le client sur une machine distante. Un joueur pourrait très bien avoir légèrement modifié le code tout en respectant le protocole pour tricher sur la mise à jour du plateau. Le contrôle des règles doit se faire côté serveur.
+\end{itemize}
+
 
 
 \question{2.8}
-%du coup j'ai rien à dire ici pour le moment
+Nous avons donc choisi la deuxième solution pour des raisons de simplicité et de sécurité.
 
 \question{2.9 (Bonus)}
 
