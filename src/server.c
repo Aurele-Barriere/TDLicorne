@@ -32,11 +32,15 @@ int game_over(char* board, struct client_set* player)
     //when a player disconnects, her opponent wins
 
     if (player->nb >= 2) {
-      printf("Connections : %d, %d\n", player->is_connected[0], player->is_connected[1]);
-       if (player->is_connected[0] == 0)
+
+      if (player->is_connected[0] == 0) {
+	printf("First player disconnected !\n");
 	return color2 + 97;
-      if (player->is_connected[1] == 0)
-      return color1 + 97;
+      }
+      if (player->is_connected[1] == 0) {
+	printf("Second player disconnected !\n");
+	return color1 + 97;
+      }
     }
     return 0;
 }
@@ -75,6 +79,7 @@ void game_7colors(int sockfd)
     srand(time(NULL)); //initializing random
     // the 7 colors game
     printf("Starting game of 7 colors\n\n");
+    int recv_error = 0;
     int winner = 0;
     char choice;
     char buffer [BUFFER_SIZE];
@@ -174,8 +179,10 @@ void game_7colors(int sockfd)
         if(player.nb == MAX_PLAYER && socket_ready(player.sockfd[current_player], 50))
         {
             memset(buffer, 0, BUFFER_SIZE);
-            recv_verif(player.sockfd[current_player], buffer);
-
+            recv_error = recv_verif(player.sockfd[current_player], buffer);
+	    if (recv_error == -1) {
+	      player.is_connected[current_player] = 0;
+	    }
 
 
             choice = buffer[0];

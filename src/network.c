@@ -62,7 +62,7 @@ int send_verif(int sockfd, char * msg)
     }
     if (tries >= MAX_TRIES)
     {
-        printf("Data not sent");
+        printf("Data not sent\n");
         return -1;
     }
     return 0;
@@ -81,7 +81,7 @@ int recv_verif(int sockfd, char * buffer)
     }
     if (tries >= MAX_TRIES)
     {
-        printf("Data not received");
+        printf("Data not received\n");
         return -1;
     }
     return 0;
@@ -164,7 +164,7 @@ void client_set_send(struct client_set * set, char* msg)
     int er;
     for (i = 0; i < set->nb; i++) {
       er = send_verif(set->sockfd[i], msg);
-      if (er == -1) {set->is_connected[i] = 0;} //handling disconnecting players
+      if (er == -1) {set->is_connected[i] = 0; printf("error\n");} //handling disconnecting players
     }
 }
 
