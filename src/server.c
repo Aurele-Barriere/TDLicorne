@@ -31,10 +31,11 @@ int game_over(char* board, struct client_set* player)
         return -1;
     //when a player disconnects, her opponent wins
     if (player->nb >= 2) {
-      /* if (player->is_connected[0] == 0)
+      printf("Connections : %d, %d\n", player->is_connected[0], player->is_connected[1]);
+       if (player->is_connected[0] == 0)
 	return color2 + 97;
       if (player->is_connected[1] == 0)
-      return color1 + 97;*/
+      return color1 + 97;
     }
     return 0;
 }
@@ -160,8 +161,8 @@ void game_7colors(int sockfd)
                 buffer[i+1] = board[i];
             
             
-            client_set_send(player, buffer);
-            client_set_send(obs, buffer);
+            client_set_send(&player, buffer);
+            client_set_send(&obs, buffer);
             
             send_board = FALSE;
         }
@@ -210,7 +211,7 @@ void game_7colors(int sockfd)
         printf("Player %c won !\n", winner);
   
 
-    client_set_send(player, buffer);
+    client_set_send(&player, buffer);
     
     
     client_set_close(player);
