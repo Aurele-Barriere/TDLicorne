@@ -66,7 +66,13 @@ Ainsi, il suffit de créer un client qui suive le schéma suivant :
 % à écrire Rémi
 
 \question{2.6} %qu'est ce qu'ils veulent que je dise la sérieusement?
-% à écrire Majorèle
+
+Ce programme a été testé sur un réseau local (sur la même machine et sur des machines différentes).
+
+Un problème s'est manifesté : vu que nous avons pris des morceaux de nos 2 projets, nous n'avions pas les mêmes conventions. Par exemple, l'un considérait des couleurs de 0 à 6 et l'autre de 97 à 103 (le code ASCII de 'a' à 'g'). La première version est utile pour la génération aléaoire, mais la seonde plus pratique pour l'affichage.
+
+Pour résoudre ce problème, il a fallu décaler les indices de couleurs en ajoutant ou retirant 'a' à certaines variables.
+
 
 \sec{Poste mono-client}
 \question{2.7}
