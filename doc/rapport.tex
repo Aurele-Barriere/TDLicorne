@@ -22,6 +22,10 @@
 
 \sec{Introduction}
 
+Ce projet a pour but d'implémenter la possibilité de jouer en réseau avec le jeu des 7 couleurs.
+
+On créera donc différents programmes (serveur, joueur et observateur) pour communiquer à travers des \textit{sockets} en TCP.
+
 
 \sec{Retransmisison des matchs en directs}
 \question{2.1}
@@ -146,6 +150,10 @@ Deux clients se chargeront donc de jouer à tour de rôle.
 Il n'y a que peu de modifications à faire dans le protocole : au lieu de jouer le coup du serveur, on écoutera sur une autre \textit{socket} le coup du second joueur.
 
 \sec{Synthèse}
+
+Ce projet fut l'occasion pour nous de nous intéresser pour la première fois à l'implémentation des \textit{sockets} en C.
+
+Il nous a également conduit à des questionnements de sécurité (vérification de règle) ou de stabilité (gestion des déconnections).
 
 \sec{Bibliographie}
 Tutorial \textit{sockets} : \url{http://beej.us/guide/bgnet/output/html/singlepage/bgnet.html}
