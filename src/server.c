@@ -220,7 +220,7 @@ void game_7colors(int sockfd)
 
 
     client_set_send(&player, buffer);
-    client_set_send(&player, buffer);
+    client_set_send(&player, buffer); // we must send it twice if one of the player expect the other player's move
     
 
 
