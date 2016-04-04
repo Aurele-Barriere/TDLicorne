@@ -85,44 +85,24 @@ void display_board(SDL_Renderer* renderer, char* board)
 
         }
     }
-
-    /*
-    rect.x = 0;
-    rect.y = h + 1;
-    rect.w = w;
-    rect.h = 50;
-    SDL_SetRenderDrawColor(game->renderer, 128, 128, 128, 255);
-    SDL_RenderFillRect(game->renderer, &rect);
-
-
-
-    for (i = 0; i < game->nb_player; i++)
-    {
-        color = game->player[i]->color;
-
-        SDL_SetRenderDrawColor(game->renderer,
-                               color->r,
-                               color->g,
-                               color->b,
-                               255);
-
-
-        rect.y = game->height + 11 + i*20;
-
-        rect.h = 10;
-        rect.w = game->player[i]->nb_cells * (game->width) / (game->board->size * game->board->size / 2);
-
-        SDL_RenderFillRect(game->renderer, &rect);
-
-        rect.y += 3;
-        rect.h -= 6;
-        rect.w = game->player[i]->protected_cells * (game->width) / (game->board->size * game->board->size / 2);
-
-        SDL_RenderFillRect(game->renderer, &rect);
-    }
-    */
+    
 
     SDL_RenderPresent(renderer);
 
+}
+
+void display_waiter(SDL_Renderer* renderer)
+{
+    SDL_Rect rect;
+
+    rect.x = 0;
+    rect.y = 0;
+    SDL_GetRendererOutputSize(renderer, &rect.w, &rect.h);
+    
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 128);
+
+    SDL_RenderFillRect(renderer, &rect);
+    SDL_RenderPresent(renderer);
 }
 

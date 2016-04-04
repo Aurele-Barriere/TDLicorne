@@ -162,9 +162,14 @@ void client_set_send(struct client_set * set, char* msg)
 {
     unsigned i;
     int er;
-    for (i = 0; i < set->nb; i++) {
-      er = send_verif(set->sockfd[i], msg);
-      if (er == -1) {set->is_connected[i] = 0; printf("error\n");} //handling disconnecting players
+    for (i = 0; i < set->nb; i++)
+    {
+        er = send_verif(set->sockfd[i], msg);
+        if (er == -1)
+        {
+            set->is_connected[i] = 0;    //handling disconnecting players
+            printf("error\n");
+        }
     }
 }
 

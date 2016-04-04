@@ -87,37 +87,25 @@ void update_board(char player, char color, char * b)
         {
             if (get_cell(i,j,b) == color)
             {
-                if (in_board(i-1,j))
+                if (get_cell(i-1,j,b) == player)
                 {
-                    if (get_cell(i-1,j,b) == player)
-                    {
-                        set_cell(i,j,player,b);
-                        change = 1;
-                    }
+                    set_cell(i,j,player,b);
+                    change = 1;
                 }
-                if (in_board(i+1,j))
+                if (get_cell(i+1,j,b) == player)
                 {
-                    if (get_cell(i+1,j,b) == player)
-                    {
-                        set_cell(i,j,player,b);
-                        change = 1;
-                    }
+                    set_cell(i,j,player,b);
+                    change = 1;
                 }
-                if (in_board(i,j-1))
+                if (get_cell(i,j-1,b) == player)
                 {
-                    if (get_cell(i,j-1,b) == player)
-                    {
-                        set_cell(i,j,player,b);
-                        change = 1;
-                    }
+                    set_cell(i,j,player,b);
+                    change = 1;
                 }
-                if (in_board(i,j+1))
+                if (get_cell(i,j+1,b) == player)
                 {
-                    if (get_cell(i,j+1,b) == player)
-                    {
-                        set_cell(i,j,player,b);
-                        change = 1;
-                    }
+                    set_cell(i,j,player,b);
+                    change = 1;
                 }
             }
         }

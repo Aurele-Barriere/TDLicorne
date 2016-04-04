@@ -2,6 +2,10 @@
 #ifndef STRATEGY_H
 #define STRATEGY_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include "board.h"
+
 /** Chooses at random between all colors */
 char alea(char player);
 

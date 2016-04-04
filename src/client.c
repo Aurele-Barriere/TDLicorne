@@ -1,16 +1,4 @@
-#include <stdio.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <SDL2/SDL.h>
-
-#include "network.h"
-#include "defines.h"
-#include "render.h"
-#include "board.h"
-#include "strategy.h"
+#include "client.h"
 
 
 void game_7colors(char you, int sockfd)
@@ -31,14 +19,14 @@ void game_7colors(char you, int sockfd)
 
 
 
-    printf("\nChoose second strategy :\n");
+    printf("\nChoose a strategy :\n");
     printf("  1. alea\n");
     printf("  2. alea_useful_colors\n");
     printf("  3. greedy\n");
     printf("  4. hegemony\n");
     printf("  5. starve\n");
     printf("  6. greedymony (mixing greedy and hegemony)\n");
-    printf("  7. player_choice\n");
+    printf("  7. player choice\n");
     if(scanf("%d", &choice_strat) != 1)
         choice_strat = 0;
 
@@ -113,6 +101,7 @@ void game_7colors(char you, int sockfd)
             }
         }
 
+
         // if non-human player
         if (player == you && strat != NULL)
         {
@@ -136,19 +125,21 @@ void game_7colors(char you, int sockfd)
                 board[i] = buffer[i+1];
 
 
-
-            //checking for end condition :
+            //checkwinnering for end condition :
             // if buffer[0] == '*', the game is over, and buffer[1] contains the winner
             if (buffer[0] == '*')
                 winner = buffer[1];
             else
             {
+                display_board(renderer, board);
+                
                 if (player == you) //asking for input if needed
                     printf("It is your turn !\n");
                 else
+                {
                     printf("Your opponent is playing, please wait...\n");
-
-                display_board(renderer, board);
+                    display_waiter(renderer);
+                }
             }
         }
     }
@@ -185,15 +176,14 @@ int main(int argc, char * argv[])
 
     // Creating socket
     sockfd = init_client(argv[1], argv[2], 'p');
+    
 
     // sending / recieving
-
     memset(buffer, 0 , BUFFER_SIZE);
     recv_verif(sockfd, buffer);
     player = buffer[0];
     printf("You are player %c\n", player);
     printf("Waiting for other player...\n");
-
 
 
     game_7colors(player, sockfd);

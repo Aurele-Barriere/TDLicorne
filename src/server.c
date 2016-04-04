@@ -1,17 +1,4 @@
-#include <stdio.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <time.h>
-#include <SDL2/SDL.h>
-
-#include "network.h"
-#include "defines.h"
-#include "render.h"
-
-#include "board.h"
+#include "server.h"
 
 void game_7colors(int sockfd);
 
@@ -23,23 +10,26 @@ int game_over(char* board, struct client_set* player)
     int limit = (BOARD_SIZE*BOARD_SIZE)/2;
 
     if (score1 > limit)
-        return color1 + 97;
+        return color1 + 'a';
     if (score2 > limit)
-        return color2 + 97;
+        return color2 + 'a';
     if (score1 == limit && score2 == limit)
         return -1;
-    //when a player disconnects, her opponent wins
+    //when a player disconnects, his opponent wins
 
-    if (player->nb >= 2) {
+    if (player->nb >= 2)
+    {
 
-      if (player->is_connected[0] == 0) {
-	printf("First player disconnected !\n");
-	return color2 + 97;
-      }
-      if (player->is_connected[1] == 0) {
-	printf("Second player disconnected !\n");
-	return color1 + 97;
-      }
+        if (player->is_connected[0] == 0)
+        {
+            printf("First player disconnected !\n");
+            return color2 + 'a';
+        }
+        if (player->is_connected[1] == 0)
+        {
+            printf("Second player disconnected !\n");
+            return color1 + 'a';
+        }
     }
     return 0;
 }
@@ -165,11 +155,11 @@ void game_7colors(int sockfd)
             buffer[0] = symbols[current_player];
             for (i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
                 buffer[i+1] = board[i];
-          
-            
+
+
             client_set_send(&player, buffer);
             client_set_send(&obs, buffer);
-            
+
             send_board = FALSE;
         }
 
@@ -179,9 +169,10 @@ void game_7colors(int sockfd)
         {
             memset(buffer, 0, BUFFER_SIZE);
             recv_error = recv_verif(player.sockfd[current_player], buffer);
-	    if (recv_error == -1) {
-	      player.is_connected[current_player] = 0;
-	    }
+            if (recv_error == -1)
+            {
+                player.is_connected[current_player] = 0;
+            }
 
 
             choice = buffer[0];
@@ -221,7 +212,7 @@ void game_7colors(int sockfd)
 
     client_set_send(&player, buffer);
     client_set_send(&player, buffer); // we must send it twice if one of the player expect the other player's move
-    
+
 
 
     client_set_close(player);

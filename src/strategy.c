@@ -1,7 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
+
 #include "strategy.h"
-#include "board.h"
 
 //random
 char alea (char player)
