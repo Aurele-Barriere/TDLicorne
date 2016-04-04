@@ -63,6 +63,17 @@ int main(int argc, char * argv[])
     return 0;
 }
 
+double elapsed_time(struct timeval t1)
+{
+    struct timeval t2;
+    gettimeofday (&t2, NULL);
+    
+    int u1 = (t1.tv_sec * 1000000 + t1.tv_usec);
+    int u2 = (t2.tv_sec * 1000000 + t2.tv_usec);
+    return (u2  - u1) / 1000000.;
+}
+
+
 void game_7colors(int sockfd)
 {
     srand(time(NULL)); //initializing random
@@ -77,6 +88,8 @@ void game_7colors(int sockfd)
     int sock;
 
     const unsigned MAX_PLAYER = 2;
+    
+    struct timeval t_begin;
 
 
     struct client_set player = client_set_init();
@@ -93,9 +106,12 @@ void game_7colors(int sockfd)
 
     printf("Waiting for players to connect.\n");
     printf("%d more players required !\n\n", MAX_PLAYER - player.nb);
+    
+    
 
     while(!(winner = game_over(board, &player)))
     {
+        
 
         // if a client/observer tries to connect
         if(socket_ready(sockfd, 50))
@@ -121,6 +137,7 @@ void game_7colors(int sockfd)
                     if (player.nb == MAX_PLAYER)
                     {
                         printf("All the player are connected... Let's start the game !\n\n");
+                        gettimeofday (&t_begin, NULL);
                         send_board = TRUE;
                     }
                     else
@@ -165,34 +182,46 @@ void game_7colors(int sockfd)
 
 
         //awaiting input from player
-        if(player.nb == MAX_PLAYER && socket_ready(player.sockfd[current_player], 50))
+        if(player.nb == MAX_PLAYER)
         {
-            memset(buffer, 0, BUFFER_SIZE);
-            recv_error = recv_verif(player.sockfd[current_player], buffer);
-            if (recv_error == -1)
+            printf("       \rtime left : %f", 20.0 - elapsed_time(t_begin));
+            fflush(stdout);
+            
+            if (elapsed_time(t_begin) >= 20.0)
             {
-                player.is_connected[current_player] = 0;
+                player.is_connected[current_player] = FALSE;
+                printf("\n");
             }
-
-
-            choice = buffer[0];
-            printf("Player %c played color %c\n", symbols[current_player], choice);
-            //rule checking
-            if (choice < 'a' || choice >= 'a' + NB_COLORS)
+            else if (socket_ready(player.sockfd[current_player], 50))
             {
-                choice = rand() % NB_COLORS;
-                choice += 'a';
-                printf("Wrong input, player has been assigned color %c\n", choice);
+                memset(buffer, 0, BUFFER_SIZE);
+                recv_error = recv_verif(player.sockfd[current_player], buffer);
+                if (recv_error == -1)
+                {
+                    player.is_connected[current_player] = 0;
+                }
+
+
+                choice = buffer[0];
+                printf("\nPlayer %c played color %c\n\n", symbols[current_player], choice);
+                //rule checking
+                if (choice < 'a' || choice >= 'a' + NB_COLORS)
+                {
+                    choice = rand() % NB_COLORS;
+                    choice += 'a';
+                    printf("Wrong input, player has been assigned color %c\n", choice);
+                }
+
+                //updating game state
+                update_board(symbols[current_player] - 'a', choice - 'a', board);
+
+
+                //changing player
+                current_player = (current_player + 1) % player.nb;
+
+                send_board = TRUE;
+                gettimeofday (&t_begin, NULL);
             }
-
-            //updating game state
-            update_board(symbols[current_player] - 'a', choice - 'a', board);
-
-
-            //changing player
-            current_player = (current_player + 1) % player.nb;
-
-            send_board = TRUE;
         }
     }
 

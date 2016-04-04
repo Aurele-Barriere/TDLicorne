@@ -117,7 +117,11 @@ void game_7colors(char you, int sockfd)
         if(socket_ready(sockfd, 50)) // non-blocking
         {
             memset(buffer, 0 , BUFFER_SIZE);
-            recv_verif(sockfd, buffer);
+            if(recv_verif(sockfd, buffer) == -1)
+            {
+                printf("Server disconnected...\n\n");
+                winner = -1;
+            }
 
             player = buffer[0];
 
