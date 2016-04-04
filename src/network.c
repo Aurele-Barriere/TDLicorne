@@ -137,7 +137,7 @@ void error (char * msg) {
 
 struct client_set client_set_init()
 {
-    struct client_set set = {NULL, 0, TRUE};
+    struct client_set set = {NULL, NULL, 0};
     return set;
 }
 
@@ -146,6 +146,9 @@ void client_set_add(struct client_set* set, int sockfd)
     set->nb++;
     set->sockfd = (int*) realloc(set->sockfd, set->nb * sizeof(int));
     set->sockfd[set->nb-1] = sockfd;
+    
+    set->is_connected = (bool*) realloc(set->is_connected, set->nb * sizeof(int));
+    set->is_connected[set->nb-1] = TRUE;
 }
 
 void client_set_send(struct client_set set, char* msg)
@@ -164,5 +167,6 @@ void client_set_close(struct client_set set)
     for (i = 0; i < set.nb; i++)
         close(set.sockfd[i]);
     free(set.sockfd);
+    free(set.is_connected);
 }
 

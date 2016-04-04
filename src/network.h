@@ -41,8 +41,8 @@ int socket_ready(int sockfd, unsigned timeout_ms);
 struct client_set
 {
     int* sockfd;
-    unsigned nb;
     bool* is_connected;
+    unsigned nb;
 };
 
 struct client_set client_set_init();
