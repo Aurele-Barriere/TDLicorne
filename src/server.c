@@ -16,7 +16,6 @@
 void game_7colors(int sockfd);
 
 
-// à compléter !!!
 int game_over(char* board, struct client_set* player)
 {
     int score1 = score(board, color1);
@@ -221,8 +220,8 @@ void game_7colors(int sockfd)
 
 
     client_set_send(&player, buffer);
+    client_set_send(&player, buffer);
     
-
 
 
     client_set_close(player);

@@ -11,6 +11,7 @@ Observers can join in at any moment to watch the game.
 # Compiling
 
 Run $ make
+
 Then to launch the server $./server portno
 
 Where portno is the port number you want to launch the server on.
