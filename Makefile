@@ -11,6 +11,10 @@ OBJ_DIR = out
 SRC = $(notdir $(wildcard  $(SRC_DIR)/*.$(EXT)))
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:.$(EXT)=.o))
 
+
+ASTYLE_OPTIONS =        --style=attach --indent=spaces=4 -A1
+
+
 ifeq (newclass,$(firstword $(MAKECMDGOALS)))
   CLASS_N := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
   $(eval $(CLASS_N):;@:)
@@ -38,6 +42,11 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.$(EXT) $(wildcard $(SRC_DIR)/%.h) $(SRC_DIR)/define
 	
 .PHONY: clean mrproper help newclass soupe_aux_choux
 
+test :
+	@konsole -e ./server 4242
+	@konsole -e ./client 4242 127.0.0.1
+	@konsole -e ./client 4242 127.0.0.1
+
 soupe_aux_choux :
 	@cvlc soupe_aux_choux.mp3
 	
@@ -52,6 +61,10 @@ clean :
 
 mrproper : clean
 	@rm -rf $(EXEC)
+	
+	
+astyle:
+	astyle $(ASTYLE_OPTIONS) $(SRC_DIR)/$(SRC).$(EXT) $(SRC_DIR)/%.h
 
 help:
 	@echo 'Makefile for project `7 colors`'

@@ -1,37 +1,37 @@
-#include "observer.h" 
+#include "observer.h"
 
 
 
-int main(int argc, char * argv[]) 
+int main(int argc, char * argv[])
 {
     int sockfd;
     bool keep_watching = TRUE;
     char buffer[BUFFER_SIZE];
-    
+
 
     // Checking port and address as argument
-    if (argc != 3) 
+    if (argc != 3)
         error("Usage : observer <portno> <host>");
 
-    
+
     printf("Waiting...\n");
     sockfd = init_client(argv[1], argv[2], 'o');
 
-  
+
     printf("Successfully connected to the server.\n\n");
-  
+
     SDL_Init(SDL_INIT_EVERYTHING);
     SDL_Window* window = SDL_CreateWindow("7 colors : observer",SDL_WINDOWPOS_UNDEFINED,
-                                        SDL_WINDOWPOS_UNDEFINED,
-                                        WINDOW_WIDTH,
-                                        WINDOW_HEIGHT,
-                                        SDL_WINDOW_SHOWN);
-    
-    
+                                          SDL_WINDOWPOS_UNDEFINED,
+                                          WINDOW_WIDTH,
+                                          WINDOW_HEIGHT,
+                                          SDL_WINDOW_SHOWN);
+
+
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    
+
     SDL_Event event;
-  
+
     while(keep_watching)
     {
         while (SDL_PollEvent(&event))
@@ -39,8 +39,8 @@ int main(int argc, char * argv[])
             if(event.type == SDL_QUIT)
                 keep_watching = FALSE;
         }
-        
-        
+
+
         if(socket_ready(sockfd, 50))
         {
             memset(buffer, 0 , BUFFER_SIZE);
@@ -50,11 +50,11 @@ int main(int argc, char * argv[])
     }
 
     close(sockfd);
-    
+
     SDL_Delay(1000);
-    
+
     SDL_DestroyWindow(window);
     SDL_Quit();
-    
+
     return 0;
 }

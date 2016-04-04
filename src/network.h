@@ -42,6 +42,7 @@ struct client_set
 {
     int* sockfd;
     unsigned nb;
+    bool* is_connected;
 };
 
 struct client_set client_set_init();

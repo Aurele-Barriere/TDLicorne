@@ -37,7 +37,13 @@ On modifie ainsi le serveur. On commence par attendre une connexion en acceptant
 
 Ensuite, on garde l'identifiant de la \textit{socket} créée après acceptation et on lance une partie.
 
-Au début, on envoie le plateau entier sur cette \textit{socket}, puis on envoie le coup joué et le numéro du joueur à chaque tour.
+Nous avons choisi d'envoyer la totalité du plateau à chaque tour à tous les observateurs. Cela présente les avantages suivants :
+\begin{itemize}
+\item Simplification des calculs côté client. Le client se contente d'effectuer un affichage.
+\item Le calcul est effectué à un seul endroit ("single point of truth").
+\item Le code est plus clair côté observateur et côté joueur client. La connexion d'un observateur en cours de partie est également simplifiée.
+\end{itemize}
+De plus, le problème de la bande passante est négligeable car la taille des données envoyées est dans tous les cas très faible. \\
 
 Quand la partie est finie, on envoie à la place du prochain coup un signal de fin de partie.
 
@@ -46,15 +52,21 @@ Quand la partie est finie, on envoie à la place du prochain coup un signal de f
 Ainsi, il suffit de créer un client qui suive le schéma suivant :
 \begin{itemize}
 \item On se connecte sur le port demandé (par exemple 7777, qui est non réservé).
-\item Tant qu'on a pas reçu un signal de fin de partie (par exemple, le premier caractère du buffer est le caractère spécial '*'), on reçoit sur la \textit{socket} utilisée pour la connexion soit le plateau entier, soit le dernier coup joué et le numéro du joueur.
+\item Tant qu'on a pas reçu un signal de fin de partie (par exemple, le premier caractère du buffer est le caractère spécial '*'), on reçoit sur la \textit{socket} utilisée pour la connexion le plateau entier et le numéro du joueur.
 \item Grâce aux fonctions de mise à jour et d'affichage, on retransmet la partie en cours.
 \end{itemize}
 
   
 
 \question{2.4 (Bonus)}
+% à écrire Rémi
+
+
 \question{2.5 (Bonus)}
+% à écrire Rémi
+
 \question{2.6} %qu'est ce qu'ils veulent que je dise la sérieusement?
+% à écrire Majorèle
 
 \sec{Poste mono-client}
 \question{2.7}
@@ -98,6 +110,7 @@ Le serveur attribuera alors automatiquement la victoire au second joueur. %à fa
 
 \sec{Bonus}
 \question{Deux joueurs à distance}
+% à compléter Rémi
 Nous avons souhaité séparer complètement les rôles des clients et du serveur.
 
 Ainsi, le serveur se contentera d'attendre la connexion de 2 joueurs, de recevoir leur choix, de vérifier si ces choix correspondent aux règles du jeu (sinon, on attribuera une couleur aléatoire), de mettre à jour, et de diffuser (aux clients comme aux observateurs).

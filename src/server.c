@@ -15,7 +15,9 @@
 
 void game_7colors(int sockfd);
 
-int game_over(char* board)
+
+// à compléter !!!
+int game_over(char* board, struct client_set* player)
 {
     int score1 = score(board, color1);
     int score2 = score(board, color2);
@@ -58,11 +60,6 @@ int main(int argc, char * argv[]) {
   return 0;
 }
 
-void next_player(char* player)
-{
-    *player = (color1 + 97) + (color2 + 97) - *player;
-}
-
 void game_7colors(int sockfd)
 {
     srand(time(NULL)); //initializing random
@@ -93,7 +90,7 @@ void game_7colors(int sockfd)
     printf("Waiting for players to connect.\n");
     printf("%d more players required !\n\n", MAX_PLAYER - player.nb);
     
-    while(!(winner = game_over(board))) 
+    while(!(winner = game_over(board, &player))) 
     {       
     
         // if a client/observer tries to connect    

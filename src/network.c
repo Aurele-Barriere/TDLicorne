@@ -133,7 +133,7 @@ void error (char * msg) {
 
 struct client_set client_set_init()
 {
-    struct client_set set = {NULL, 0};
+    struct client_set set = {NULL, 0, TRUE};
     return set;
 }
 
