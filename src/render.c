@@ -8,7 +8,7 @@ void display_board(SDL_Renderer* renderer, char* board)
     char color;
     bool tl, tr, tu, td; // test left, right, up, down
     int w, h;
-    
+
     SDL_GetRendererOutputSize(renderer, &w, &h);
 
     unsigned block_width = w / BOARD_SIZE;
@@ -17,7 +17,7 @@ void display_board(SDL_Renderer* renderer, char* board)
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255 );
     SDL_RenderClear(renderer);
-    
+
 
 
     for (i = 0; i < BOARD_SIZE; i++)
@@ -30,7 +30,7 @@ void display_board(SDL_Renderer* renderer, char* board)
             rect.y = j * block_height;
             rect.w = block_width;
             rect.h = block_height;
-            
+
             if (block_width >= 4)
             {
                 tl = (color == get_cell(i-1, j, board));
@@ -46,39 +46,39 @@ void display_board(SDL_Renderer* renderer, char* board)
                 rect.y += !tu;
                 rect.h -= !td + !tu;
             }
-            
+
             switch(color)
             {
-                case 0:
-                    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-                    break;
-                case 1:
-                    SDL_SetRenderDrawColor(renderer, 255, 128, 0, 255);
-                    break;
-                case 2:
-                    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
-                    break;
-                case 3:
-                    SDL_SetRenderDrawColor(renderer, 128, 255, 0, 255);
-                    break;
-                case 4:
-                    SDL_SetRenderDrawColor(renderer, 0, 128, 255, 255);
-                    break;
-                case 5:
-                    SDL_SetRenderDrawColor(renderer, 95, 10, 190, 255);
-                    break;
-                case 6:
-                    SDL_SetRenderDrawColor(renderer, 238, 130, 238, 255);
-                    break;
-                case color1:
-                    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-                    break;
-                case color2:
-                    SDL_SetRenderDrawColor(renderer, 55, 55, 55, 255);
-                    break;
-                default:
-                    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-                    
+            case 0:
+                SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+                break;
+            case 1:
+                SDL_SetRenderDrawColor(renderer, 255, 128, 0, 255);
+                break;
+            case 2:
+                SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+                break;
+            case 3:
+                SDL_SetRenderDrawColor(renderer, 128, 255, 0, 255);
+                break;
+            case 4:
+                SDL_SetRenderDrawColor(renderer, 0, 128, 255, 255);
+                break;
+            case 5:
+                SDL_SetRenderDrawColor(renderer, 95, 10, 190, 255);
+                break;
+            case 6:
+                SDL_SetRenderDrawColor(renderer, 238, 130, 238, 255);
+                break;
+            case color1:
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+                break;
+            case color2:
+                SDL_SetRenderDrawColor(renderer, 55, 55, 55, 255);
+                break;
+            default:
+                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+
             }
 
             SDL_RenderFillRect(renderer, &rect);
@@ -125,4 +125,4 @@ void display_board(SDL_Renderer* renderer, char* board)
     SDL_RenderPresent(renderer);
 
 }
- 
+

@@ -40,7 +40,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.$(EXT) $(wildcard $(SRC_DIR)/%.h) $(SRC_DIR)/define
 
 
 	
-.PHONY: clean mrproper help newclass soupe_aux_choux
+.PHONY: clean mrproper help newclass soupe_aux_choux astyle
 
 test :
 	@konsole -e ./server 4242
@@ -64,7 +64,8 @@ mrproper : clean
 	
 	
 astyle:
-	astyle $(ASTYLE_OPTIONS) $(SRC_DIR)/$(SRC).$(EXT) $(SRC_DIR)/%.h
+	astyle $(ASTYLE_OPTIONS) $(wildcard $(SRC_DIR)/*.$(EXT)) $(wildcard $(SRC_DIR)/*.h)
+	@rm -rf $(SRC_DIR)/*.orig
 
 help:
 	@echo 'Makefile for project `7 colors`'
