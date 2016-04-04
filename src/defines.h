@@ -1,6 +1,6 @@
-/* 
+/*
    Useful definitions
- */ 
+ */
 #ifndef DEFINES_H
 #define DEFINES_H
 
@@ -21,9 +21,9 @@ typedef char bool;
 
 #define BOARD_SIZE 10
 #define NB_COLORS 7
-// What symbol will be used for players. must be negative so there is no confusion with letters. 
+// What symbol will be used for players. must be negative so there is no confusion with letters.
 // To see wich symbol, add 97 and check ascii table.
-#define color1 -3 
+#define color1 -3
 #define color2 -33
 
 

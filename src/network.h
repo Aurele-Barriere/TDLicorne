@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include "defines.h"
-/* 
+/*
    Networking functions
 */
 
@@ -29,7 +29,7 @@ void send_char(int sockfd, char msg);
 int wait_client(int sockfd);
 
 
-// Non blocking. Returns 1 if sockfd is ready for reading, 0 otherwise. 
+// Non blocking. Returns 1 if sockfd is ready for reading, 0 otherwise.
 // timeout in ms
 int socket_ready(int sockfd, unsigned timeout_ms);
 
