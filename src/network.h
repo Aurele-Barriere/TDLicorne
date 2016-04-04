@@ -16,10 +16,10 @@ int init_server(const char* portno);
 int init_client(const char* portno, const char* addr, char type);
 
 // Sends everything
-void send_verif(int sockfd, char * msg);
+int send_verif(int sockfd, char * msg);
 
 // Receives everything
-void recv_verif(int sockfd, char * buffer);
+int recv_verif(int sockfd, char * buffer);
 
 
 // Sends a single char to the given socket

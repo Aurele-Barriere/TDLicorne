@@ -49,7 +49,7 @@ int init_client(const char* portno, const char* addr, char type)
 }
 
 
-void send_verif(int sockfd, char * msg) {
+int send_verif(int sockfd, char * msg) {
   int sent = 0;
   int n = 0;
   int tries = 0;
@@ -59,11 +59,13 @@ void send_verif(int sockfd, char * msg) {
     sent += n;
   }
   if (tries >= MAX_TRIES) {
-    error("Data not sent");
+    printf("Data not sent");
+    return -1;
   }
+  return 0;
 }
 
-void recv_verif(int sockfd, char * buffer) {
+int recv_verif(int sockfd, char * buffer) {
   int received = 0;
   int n = 0;
   int tries = 0;
@@ -73,8 +75,10 @@ void recv_verif(int sockfd, char * buffer) {
     received += n;
   }
   if (tries >= MAX_TRIES) {
-    error("Data not received");
+    printf("Data not received");
+    return -1;
   }
+  return 0;
 }
 
 
@@ -147,8 +151,11 @@ void client_set_add(struct client_set* set, int sockfd)
 void client_set_send(struct client_set set, char* msg)
 {
     unsigned i;
-    for (i = 0; i < set.nb; i++)
-        send_verif(set.sockfd[i], msg);
+    int er;
+    for (i = 0; i < set.nb; i++) {
+      er = send_verif(set.sockfd[i], msg);
+      if (er == -1) {set.is_connected[i] = 0;} //handling disconnecting players
+    }
 }
 
 void client_set_close(struct client_set set)

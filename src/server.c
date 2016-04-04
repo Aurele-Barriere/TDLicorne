@@ -29,6 +29,13 @@ int game_over(char* board, struct client_set* player)
         return color2 + 97;
     if (score1 == limit && score2 == limit)
         return -1;
+    //when a player disconnects, her opponent wins
+    if (player->nb >= 2) {
+      /* if (player->is_connected[0] == 0)
+	return color2 + 97;
+      if (player->is_connected[1] == 0)
+      return color1 + 97;*/
+    }
     return 0;
 }
 
