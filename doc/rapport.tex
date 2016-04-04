@@ -62,11 +62,21 @@ Ainsi, il suffit de créer un client qui suive le schéma suivant :
   
 
 \question{2.4 (Bonus)}
-% à écrire Rémi
+Pour autoriser les observateurs à se connecter après le début de la partie, nous avons écrit la fonction \texttt{socket\_ready}, faisant appel à \texttt{select}, et qui permet de déterminer si un observateur est en train d'essayer de se connecter à une socket donnée. \\
+Notre programme pertmet ainsi à un observateur de se connecter à n'importe quel moment. \\
+Comme nous avons choisi d'envoyer la plateau entier à chaque coup, nous n'avons pas eu à modifier le code de l'obervateur.
+
 
 
 \question{2.5 (Bonus)}
-% à écrire Rémi
+Pour autoriser plusieurs observateurs, nous avons défini une structure \texttt{client\_set}. Cette structure permet de gérer un ensemble de \textit{socket}. Nous avons défini des fonctions pour manipuler cette structure avec entre autres :
+\begin{itemize}
+\item \textt{client\_set\_add} : permet d'ajouter une socket à l'ensemble.
+\item \textt{client\_set\_send} : permet d'envoyer un buffer à toutes les \textit{socket} de l'ensemble.
+\end{itemize}
+À l'aide de cette structure, la gestion d'un nombre variable d'observateurs est donc assez simple côté serveur. Côté observateur, le fonctionnement est inchangé.
+
+
 
 \question{2.6} %qu'est ce qu'ils veulent que je dise la sérieusement?
 
