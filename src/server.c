@@ -30,12 +30,17 @@ int game_over(char* board, struct client_set* player)
     if (score1 == limit && score2 == limit)
         return -1;
     //when a player disconnects, her opponent wins
-    if (player->nb >= 2)
-    {
-        /* if (player->is_connected[0] == 0)
-        return color2 + 97;
-             if (player->is_connected[1] == 0)
-             return color1 + 97;*/
+
+    if (player->nb >= 2) {
+
+      if (player->is_connected[0] == 0) {
+	printf("First player disconnected !\n");
+	return color2 + 97;
+      }
+      if (player->is_connected[1] == 0) {
+	printf("Second player disconnected !\n");
+	return color1 + 97;
+      }
     }
     return 0;
 }
@@ -74,6 +79,7 @@ void game_7colors(int sockfd)
     srand(time(NULL)); //initializing random
     // the 7 colors game
     printf("Starting game of 7 colors\n\n");
+    int recv_error = 0;
     int winner = 0;
     char choice;
     char buffer [BUFFER_SIZE];
@@ -160,11 +166,11 @@ void game_7colors(int sockfd)
             buffer[0] = symbols[current_player];
             for (i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
                 buffer[i+1] = board[i];
-
-
-            client_set_send(player, buffer);
-            client_set_send(obs, buffer);
-
+          
+            
+            client_set_send(&player, buffer);
+            client_set_send(&obs, buffer);
+            
             send_board = FALSE;
         }
 
@@ -173,8 +179,10 @@ void game_7colors(int sockfd)
         if(player.nb == MAX_PLAYER && socket_ready(player.sockfd[current_player], 50))
         {
             memset(buffer, 0, BUFFER_SIZE);
-            recv_verif(player.sockfd[current_player], buffer);
-
+            recv_error = recv_verif(player.sockfd[current_player], buffer);
+	    if (recv_error == -1) {
+	      player.is_connected[current_player] = 0;
+	    }
 
 
             choice = buffer[0];
@@ -212,7 +220,9 @@ void game_7colors(int sockfd)
         printf("Player %c won !\n", winner);
 
 
-    client_set_send(player, buffer);
+    client_set_send(&player, buffer);
+    
+
 
 
     client_set_close(player);

@@ -47,6 +47,6 @@ struct client_set
 
 struct client_set client_set_init();
 void client_set_add(struct client_set* set, int sockfd);
-void client_set_send(struct client_set set, char* msg);
+void client_set_send(struct client_set* set, char* msg);
 void client_set_close(struct client_set set);
 
