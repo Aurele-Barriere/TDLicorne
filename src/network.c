@@ -135,7 +135,7 @@ int wait_client(int sockfd)
 
 struct client_set client_set_init()
 {
-    struct client_set set = {NULL, NULL, NULL, 0};
+    struct client_set set = {NULL, 0};
     return set;
 }
 
@@ -143,14 +143,11 @@ void client_set_add(struct client_set* set, int sockfd, char id)
 {
     set->nb++;
     
-    set->sockfd = (int*) realloc(set->sockfd, set->nb * sizeof(int));
-    set->sockfd[set->nb-1] = sockfd;
-
-    set->is_connected = (bool*) realloc(set->is_connected, set->nb * sizeof(bool));
-    set->is_connected[set->nb-1] = TRUE;
-
-    set->id = (char*) realloc(set->id, set->nb * sizeof(char));
-    set->id[set->nb-1] = id;
+    set->client = (struct client*) realloc(set->client, set->nb * sizeof(struct client));
+    set->client[set->nb-1].sockfd = sockfd;
+    set->client[set->nb-1].is_connected = TRUE;
+    set->client[set->nb-1].id = id;
+    set->client[set->nb-1].time = 0.0;
 }
 
 void client_set_send(struct client_set * set, char* msg)
@@ -159,10 +156,10 @@ void client_set_send(struct client_set * set, char* msg)
     int er;
     for (i = 0; i < set->nb; i++)
     {
-        er = send_verif(set->sockfd[i], msg);
+        er = send_verif(set->client[i].sockfd, msg);
         if (er == -1)
         {
-            set->is_connected[i] = 0;    //handling disconnecting players
+            set->client[i].is_connected = 0;    //handling disconnecting players
             printf("error\n");
         }
     }
@@ -172,9 +169,7 @@ void client_set_close(struct client_set set)
 {
     unsigned i;
     for (i = 0; i < set.nb; i++)
-        close(set.sockfd[i]);
-    free(set.sockfd);
-    free(set.is_connected);
-    free(set.id);
+        close(set.client[i].sockfd);
+    free(set.client);
 }
 

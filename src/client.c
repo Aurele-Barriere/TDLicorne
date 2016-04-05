@@ -119,7 +119,7 @@ void game_7colors(char you, char (*strat)(char), int sockfd)
             switch (event.type)
             {
             case SDL_QUIT:
-                winner = -1;
+                winner = other(you);
                 break;
 
             case SDL_MOUSEBUTTONDOWN:

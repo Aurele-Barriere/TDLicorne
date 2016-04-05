@@ -39,13 +39,18 @@ int socket_ready(int sockfd, unsigned timeout_ms);
 
 
 
+struct client
+{
+    int sockfd;
+    bool is_connected;
+    char id; // the letter of the player
+    double time;
+};
 
 // This structure handles a group of clients
 struct client_set
 {
-    int* sockfd;  
-    bool* is_connected;
-    char* id; // the letters of the players
+    struct client* client;
     unsigned nb;
 };
 

@@ -35,28 +35,28 @@ int game_over(char* board, struct client_set player)
     if (player.nb != 2)
         return 0;
     
-    int score1 = score(board, player.id[0]);
-    int score2 = score(board, player.id[1]);
+    int score1 = score(board, player.client[0].id);
+    int score2 = score(board, player.client[1].id);
     int limit = (BOARD_SIZE*BOARD_SIZE)/2;
 
     if (score1 > limit)
-        return  player.id[0];
+        return  player.client[0].id;
     if (score2 > limit)
-        return  player.id[1];
+        return  player.client[1].id;
     if (score1 == limit && score2 == limit)
         return -1;
     
     
     //when a player disconnects, his opponent wins
-    if (!player.is_connected[0])
+    if (!player.client[0].is_connected)
     {
         printf("First player disconnected !\n");
-        return player.id[1];
+        return player.client[1].id;
     }
-    if (!player.is_connected[1])
+    if (!player.client[1].is_connected)
     {
         printf("Second player disconnected !\n");
-        return player.id[0];
+        return player.client[0].id;
     }
     
     return 0;

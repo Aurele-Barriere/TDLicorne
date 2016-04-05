@@ -22,8 +22,8 @@ typedef char bool;
 #define BOARD_SIZE 30
 #define NB_COLORS 7
 
-
-
+#define MAX_PLAYER 2
+#define TIME_OUT 20.0
 
 #define BUFFER_SIZE ((BOARD_SIZE)*(BOARD_SIZE)*2)
 #define MAX_TRIES 200

@@ -47,11 +47,11 @@ void game_7colors(int sockfd)
     int winner = 0;
     char choice;
     char buffer [BUFFER_SIZE];
+    double t;
     int i;
 
     int sock;
 
-    const unsigned MAX_PLAYER = 2;
 
     struct timeval t_begin;
 
@@ -70,7 +70,6 @@ void game_7colors(int sockfd)
     set_cell(BOARD_SIZE-1, 0, symbols[1], board);
     
     printf("The board has been generated.\n\n");
-    print_board(board);
 
     printf("Waiting for players to connect.\n");
     printf("%d more players required !\n\n", MAX_PLAYER - player.nb);
@@ -99,8 +98,8 @@ void game_7colors(int sockfd)
                 {
                     client_set_add(&player, sock, symbols[player.nb]);
 
-                    send_char(sock, player.id[player.nb-1]);
-                    printf("Player %c successfully connected !\n", player.id[player.nb-1]);
+                    send_char(sock, player.client[player.nb-1].id);
+                    printf("Player %c successfully connected !\n", player.client[player.nb-1].id);
 
                     if (player.nb == MAX_PLAYER)
                     {
@@ -137,7 +136,7 @@ void game_7colors(int sockfd)
         {
             memset(buffer, 0, BUFFER_SIZE);
 
-            buffer[0] = player.id[current_player];
+            buffer[0] = player.client[current_player].id;
             for (i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
                 buffer[i+1] = board[i];
 
@@ -152,26 +151,32 @@ void game_7colors(int sockfd)
         //awaiting input from player
         if(player.nb == MAX_PLAYER)
         {
-            printf("       \rtime left : %f", 20.0 - elapsed_time(t_begin));
+            t = elapsed_time(t_begin);
+            printf("       \rtime left : %f", TIME_OUT - t);
             fflush(stdout);
 
-            if (elapsed_time(t_begin) >= 20.0)
+            if (socket_ready(player.client[current_player].sockfd, 50) || t >= TIME_OUT)
             {
-                player.is_connected[current_player] = FALSE;
-                printf("\n");
-            }
-            else if (socket_ready(player.sockfd[current_player], 50))
-            {
-                memset(buffer, 0, BUFFER_SIZE);
-                recv_error = recv_verif(player.sockfd[current_player], buffer);
-                if (recv_error == -1)
+                // If time is out
+                if (t >= TIME_OUT)
                 {
-                    player.is_connected[current_player] = 0;
+                    choice = rand() % NB_COLORS + 'a';
+                    printf("\nTime out, player has been assigned color %c\n", choice);
                 }
+                else
+                {
+                    memset(buffer, 0, BUFFER_SIZE);
+                    recv_error = recv_verif(player.client[current_player].sockfd, buffer);
+                    if (recv_error == -1)
+                    {
+                        player.client[current_player].is_connected = 0;
+                    }
+                    choice = buffer[0];
+                }
+                
+                player.client[current_player].time += t;
 
-
-                choice = buffer[0];
-                printf("\nPlayer %c played color %c\n\n", player.id[current_player], choice);
+                printf("\nPlayer %c played color %c\n\n", player.client[current_player].id, choice);
                 //rule checking
                 if (choice < 'a' || choice >= 'a' + NB_COLORS)
                 {
@@ -180,7 +185,7 @@ void game_7colors(int sockfd)
                 }
 
                 //updating game state
-                update_board(player.id[current_player], choice, board);
+                update_board(player.client[current_player].id, choice, board);
 
 
                 //changing player
@@ -199,12 +204,16 @@ void game_7colors(int sockfd)
     buffer[0] = '*';
     buffer[1] = winner;
 
-    printf("Game over !\n");
+    printf("Game over !\n\n");
+    
+    printf("Time for player %c : %f\n", player.client[0].id, player.client[0].time);
+    printf("Time for player %c : %f\n\n", player.client[1].id, player.client[1].time);
+    
     if (winner == -1)
         printf("Draw\n");
     else
         printf("Player %c won !\n", winner);
-
+    
 
     client_set_send(&player, buffer);
     client_set_send(&player, buffer); // we must send it twice if one of the player expect the other player's move
