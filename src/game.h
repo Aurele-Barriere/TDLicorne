@@ -10,7 +10,7 @@
 void update_board(char player, char color, char * b);
 
 /** Returns 0 if the game is not over, -1 if it is a draw, of the winner playe otherwise */
-int game_over(char* board, struct client_set* player);
+int game_over(char* board, struct client_set player);
 
 
 

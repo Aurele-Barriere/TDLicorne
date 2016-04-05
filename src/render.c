@@ -6,12 +6,10 @@
 void print_board(char * b)
 {
     int i, j;
-    printf("Score1: %d, Score2: %d\n", score(b,color1), score(b,color2));
-    printf("Frontier1: %d, Frontier2: %d\n", frontier(b,color1), frontier(b,color2));
-    for (i=0; i<BOARD_SIZE; i++)
+    for (i = 0; i < BOARD_SIZE; i++)
     {
-        for (j=0; j<BOARD_SIZE; j++)
-            printf("%c ", get_cell(i, j, b)+97);
+        for (j = 0; j < BOARD_SIZE; j++)
+            printf("%c ", get_cell(i, j, b));
         printf("\n");
     }
 }
@@ -65,31 +63,31 @@ void display_board(SDL_Renderer* renderer, char* board)
 
             switch(color)
             {
-            case 0:
+            case 'a':
                 SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
                 break;
-            case 1:
+            case 'b':
                 SDL_SetRenderDrawColor(renderer, 255, 128, 0, 255);
                 break;
-            case 2:
+            case 'c':
                 SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
                 break;
-            case 3:
+            case 'd':
                 SDL_SetRenderDrawColor(renderer, 128, 255, 0, 255);
                 break;
-            case 4:
+            case 'e':
                 SDL_SetRenderDrawColor(renderer, 0, 128, 255, 255);
                 break;
-            case 5:
+            case 'f':
                 SDL_SetRenderDrawColor(renderer, 95, 10, 190, 255);
                 break;
-            case 6:
+            case 'g':
                 SDL_SetRenderDrawColor(renderer, 238, 130, 238, 255);
                 break;
-            case color1:
+            case '^':
                 SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
                 break;
-            case color2:
+            case '@':
                 SDL_SetRenderDrawColor(renderer, 55, 55, 55, 255);
                 break;
             default:

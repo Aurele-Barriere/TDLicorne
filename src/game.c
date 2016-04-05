@@ -30,33 +30,35 @@ void update_board(char player, char color, char * b)
 
 
 
-int game_over(char* board, struct client_set* player)
+int game_over(char* board, struct client_set player)
 {
-    int score1 = score(board, color1);
-    int score2 = score(board, color2);
+    if (player.nb != 2)
+        return 0;
+    
+    int score1 = score(board, player.id[0]);
+    int score2 = score(board, player.id[1]);
     int limit = (BOARD_SIZE*BOARD_SIZE)/2;
 
     if (score1 > limit)
-        return color1 + 'a';
+        return  player.id[0];
     if (score2 > limit)
-        return color2 + 'a';
+        return  player.id[1];
     if (score1 == limit && score2 == limit)
         return -1;
+    
+    
     //when a player disconnects, his opponent wins
-
-    if (player->nb >= 2)
+    if (!player.is_connected[0])
     {
-        if (player->is_connected[0] == 0)
-        {
-            printf("First player disconnected !\n");
-            return color2 + 'a';
-        }
-        if (player->is_connected[1] == 0)
-        {
-            printf("Second player disconnected !\n");
-            return color1 + 'a';
-        }
+        printf("First player disconnected !\n");
+        return player.id[1];
     }
+    if (!player.is_connected[1])
+    {
+        printf("Second player disconnected !\n");
+        return player.id[0];
+    }
+    
     return 0;
 }
 

@@ -135,18 +135,22 @@ int wait_client(int sockfd)
 
 struct client_set client_set_init()
 {
-    struct client_set set = {NULL, NULL, 0};
+    struct client_set set = {NULL, NULL, NULL, 0};
     return set;
 }
 
-void client_set_add(struct client_set* set, int sockfd)
+void client_set_add(struct client_set* set, int sockfd, char id)
 {
     set->nb++;
+    
     set->sockfd = (int*) realloc(set->sockfd, set->nb * sizeof(int));
     set->sockfd[set->nb-1] = sockfd;
 
-    set->is_connected = (bool*) realloc(set->is_connected, set->nb * sizeof(int));
+    set->is_connected = (bool*) realloc(set->is_connected, set->nb * sizeof(bool));
     set->is_connected[set->nb-1] = TRUE;
+
+    set->id = (char*) realloc(set->id, set->nb * sizeof(char));
+    set->id[set->nb-1] = id;
 }
 
 void client_set_send(struct client_set * set, char* msg)
@@ -171,5 +175,6 @@ void client_set_close(struct client_set set)
         close(set.sockfd[i]);
     free(set.sockfd);
     free(set.is_connected);
+    free(set.id);
 }
 

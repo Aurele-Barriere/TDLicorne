@@ -127,7 +127,7 @@ void game_7colors(char you, char (*strat)(char), int sockfd)
                 {
                     choice = get_cell(event.motion.x / (WINDOW_WIDTH / BOARD_SIZE),
                                       event.motion.y / (WINDOW_HEIGHT / BOARD_SIZE),
-                                      board) + 'a';
+                                      board);
                     memset(buffer, 0, BUFFER_SIZE);
                     buffer[0] = choice;
                     send_verif(sockfd, buffer);
@@ -142,7 +142,7 @@ void game_7colors(char you, char (*strat)(char), int sockfd)
         // if non-human player
         if (player == you && strat != NULL)
         {
-            choice = strat(you - 'a') + 'a';
+            choice = strat(you);
             memset(buffer, 0, BUFFER_SIZE);
             buffer[0] = choice;
             send_verif(sockfd, buffer);

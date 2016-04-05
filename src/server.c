@@ -66,14 +66,18 @@ void game_7colors(int sockfd)
 
 
     set_sym_board(); //initializing board
+    set_cell(0, BOARD_SIZE-1, symbols[0], board);
+    set_cell(BOARD_SIZE-1, 0, symbols[1], board);
+    
     printf("The board has been generated.\n\n");
+    print_board(board);
 
     printf("Waiting for players to connect.\n");
     printf("%d more players required !\n\n", MAX_PLAYER - player.nb);
 
 
 
-    while(!(winner = game_over(board, &player)))
+    while(!(winner = game_over(board, player)))
     {
 
 
@@ -93,10 +97,10 @@ void game_7colors(int sockfd)
                 printf("A new player tried to connect\n");
                 if (player.nb < MAX_PLAYER)
                 {
-                    client_set_add(&player, sock);
+                    client_set_add(&player, sock, symbols[player.nb]);
 
-                    send_char(sock, symbols[player.nb-1]);
-                    printf("Player %c successfully connected !\n", symbols[player.nb-1]);
+                    send_char(sock, player.id[player.nb-1]);
+                    printf("Player %c successfully connected !\n", player.id[player.nb-1]);
 
                     if (player.nb == MAX_PLAYER)
                     {
@@ -117,7 +121,7 @@ void game_7colors(int sockfd)
                 break;
             case 'o': // observer
                 printf("A new observer tried to connect\n");
-                client_set_add(&obs, sock);
+                client_set_add(&obs, sock, '\0');
                 printf("Observer successfully connected !\n\n");
                 break;
             default:
@@ -133,7 +137,7 @@ void game_7colors(int sockfd)
         {
             memset(buffer, 0, BUFFER_SIZE);
 
-            buffer[0] = symbols[current_player];
+            buffer[0] = player.id[current_player];
             for (i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
                 buffer[i+1] = board[i];
 
@@ -167,17 +171,16 @@ void game_7colors(int sockfd)
 
 
                 choice = buffer[0];
-                printf("\nPlayer %c played color %c\n\n", symbols[current_player], choice);
+                printf("\nPlayer %c played color %c\n\n", player.id[current_player], choice);
                 //rule checking
                 if (choice < 'a' || choice >= 'a' + NB_COLORS)
                 {
-                    choice = rand() % NB_COLORS;
-                    choice += 'a';
+                    choice = rand() % NB_COLORS + 'a';
                     printf("Wrong input, player has been assigned color %c\n", choice);
                 }
 
                 //updating game state
-                update_board(symbols[current_player] - 'a', choice - 'a', board);
+                update_board(player.id[current_player], choice, board);
 
 
                 //changing player

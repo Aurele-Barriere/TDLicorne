@@ -26,39 +26,16 @@ char alea_useful_colors(char player)
         for (j = 0; j< BOARD_SIZE; j++)
         {
             color = get_cell(i,j,board);
-            if (color>=0 && color < NB_COLORS)
+            if ('a' <= color && color < 'a' + NB_COLORS)
             {
-                c = (int) color;
-                if (useful[c]==0)
+                c = (int) (color - 'a');
+                if (useful[c] == 0)
                 {
-                    if (in_board(i-1,j))
-                    {
-                        if (get_cell(i-1,j,board) == player)
-                        {
-                            useful[c] = 1;
-                        }
-                    }
-                    if (in_board(i+1,j))
-                    {
-                        if (get_cell(i+1,j,board) == player)
-                        {
-                            useful[c] = 1;
-                        }
-                    }
-                    if (in_board(i,j-1))
-                    {
-                        if (get_cell(i,j-1,board) == player)
-                        {
-                            useful[c] = 1;
-                        }
-                    }
-                    if (in_board(i,j+1))
-                    {
-                        if (get_cell(i,j+1,board) == player)
-                        {
-                            useful[c] = 1;
-                        }
-                    }
+                    if (get_cell(i-1,j,board) == player ||
+                        get_cell(i+1,j,board) == player ||
+                        get_cell(i,j-1,board) == player ||
+                        get_cell(i,j+1,board) == player)
+                        useful[c] = 1;
                 }
             }
         }
@@ -94,9 +71,9 @@ char alea_useful_colors(char player)
     }
     if(printing)
     {
-        printf("\nColor chose by random_useful AI : %c\n", i+97);
+        printf("\nColor chose by random_useful AI : %c\n", i+'a');
     }
-    return decision;
+    return decision + 'a';
 }
 
 //wrong greedy
@@ -112,39 +89,15 @@ char wrong_greedy(char player)
         for (j = 0; j< BOARD_SIZE; j++)
         {
             color = get_cell(i,j,board);
-            if (color>=0 && color < BOARD_SIZE)
+            if ('a' <= color && color < 'a' + NB_COLORS)
             {
-                c = (int) color;
+                c = (int) (color - 'a');
 
-                if (in_board(i-1,j))
-                {
-                    if (get_cell(i-1,j,board) == player)
-                    {
-                        occurrences[c]++;
-                    }
-                }
-                if (in_board(i+1,j))
-                {
-                    if (get_cell(i+1,j,board) == player)
-                    {
-                        occurrences[c]++;
-                    }
-                }
-                if (in_board(i,j-1))
-                {
-                    if (get_cell(i,j-1,board) == player)
-                    {
-                        occurrences[c]++;
-                    }
-                }
-                if (in_board(i,j+1))
-                {
-                    if (get_cell(i,j+1,board) == player)
-                    {
-                        occurrences[c]++;
-                    }
-                }
-
+                if (get_cell(i-1,j,board) == player || 
+                    get_cell(i+1,j,board) == player || 
+                    get_cell(i,j-1,board) == player || 
+                    get_cell(i,j+1,board) == player)
+                    occurrences[c]++;
             }
         }
     }
@@ -155,12 +108,12 @@ char wrong_greedy(char player)
         if (occurrences[i] > max)
         {
             max = occurrences[i];
-            letter = i;
+            letter = i + 'a';
         }
     }
     if(printing)
     {
-        printf("\nColor chose by wrong greedy AI : %c\n", letter+97);
+        printf("\nColor chose by wrong greedy AI : %c\n", letter);
     }
     return letter;
 }
@@ -173,15 +126,9 @@ char player_choice(char player)
     printf("Must be between a-g  \n");
     c = getchar();
     getchar();
-    c -= 97;
-    if (c >= 0 && c < NB_COLORS)
-    {
+    if ('a' <= c && c < 'a' + NB_COLORS)
         return c;
-    }
-    else
-    {
-        return player_choice(player);
-    }
+    return player_choice(player);
 }
 
 
@@ -194,10 +141,10 @@ char maximize(int (*f) (char *, char), char player)
     char color;
     int c;
     int val[NB_COLORS] = { 0 };
-    for (i = 0; i< NB_COLORS; i++)
+    for (i = 0; i < NB_COLORS; i++)
     {
         copy_board();
-        update_board(player, i, test_board);
+        update_board(player, i+'a', test_board);
         val[i] = f(test_board, player);
     }
 
@@ -210,39 +157,17 @@ char maximize(int (*f) (char *, char), char player)
         for (j = 0; j< BOARD_SIZE; j++)
         {
             color = get_cell(i,j,board);
-            if (color>=0 && color < NB_COLORS)
+            if ('a' <= color && color < 'a' + NB_COLORS)
             {
-                c = (int) color;
-                if (useful[c]==0)
+                c = (int) (color - 'a');
+                if (useful[c] == 0)
                 {
-                    if (in_board(i-1,j))
-                    {
-                        if (get_cell(i-1,j,board) == player)
-                        {
-                            useful[c] = 1;
-                        }
-                    }
-                    if (in_board(i+1,j))
-                    {
-                        if (get_cell(i+1,j,board) == player)
-                        {
-                            useful[c] = 1;
-                        }
-                    }
-                    if (in_board(i,j-1))
-                    {
-                        if (get_cell(i,j-1,board) == player)
-                        {
-                            useful[c] = 1;
-                        }
-                    }
-                    if (in_board(i,j+1))
-                    {
-                        if (get_cell(i,j+1,board) == player)
-                        {
-                            useful[c] = 1;
-                        }
-                    }
+                    if (get_cell(i-1,j,board) == player ||
+                        get_cell(i+1,j,board) == player ||
+                        get_cell(i,j-1,board) == player ||
+                        get_cell(i,j+1,board) == player)
+                        useful[c] = 1;
+                    
                 }
             }
         }
@@ -263,12 +188,12 @@ char maximize(int (*f) (char *, char), char player)
         if (val[i]>=max)
         {
             max = val[i];
-            choice = i;
+            choice = i + 'a';
         }
     }
     if(printing)
     {
-        printf("color chosen by AI : %c\n", choice +97);
+        printf("color chosen by AI : %c\n", choice);
     }
     return choice;
 }

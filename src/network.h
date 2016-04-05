@@ -43,16 +43,17 @@ int socket_ready(int sockfd, unsigned timeout_ms);
 // This structure handles a group of clients
 struct client_set
 {
-    int* sockfd;
+    int* sockfd;  
     bool* is_connected;
+    char* id; // the letters of the players
     unsigned nb;
 };
 
 // Inits a client_set with defaults values
 struct client_set client_set_init();
 
-// Adds a socket to the client_set
-void client_set_add(struct client_set* set, int sockfd);
+// Adds a socket to the client_set, with the given id (only for players)
+void client_set_add(struct client_set* set, int sockfd, char id);
 
 // Sends a buffer to all the sockets of the client_set
 void client_set_send(struct client_set* set, char* msg);

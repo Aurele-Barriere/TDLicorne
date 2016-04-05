@@ -22,14 +22,22 @@ void set_cell(int x, int y, char color, char * b)
 //returns color of the other player
 char other(char color)
 {
-    if (color == color1)
+    char c;
+    
+    
+    int i;
+    int j;
+    for (i = 0; i < BOARD_SIZE; i++)
     {
-        return color2;
+        for (j = 0; j < BOARD_SIZE; j++)
+        {
+            c = get_cell(i, j, board);
+            if (c != color && (c < 'a' || c >= 'a' + NB_COLORS))
+                return c;
+        }
     }
-    else
-    {
-        return color1;
-    }
+            
+    return '\0';
 }
 
 //copying board into test_board
@@ -72,12 +80,10 @@ void set_random_board()
     {
         for (j=0; j < BOARD_SIZE; j++)
         {
-            r = rand() % NB_COLORS;
+            r = rand() % NB_COLORS + 'a';
             set_cell(i,j,r,board);
         }
     }
-    set_cell(0,BOARD_SIZE-1, color1,board);
-    set_cell(BOARD_SIZE-1,0, color2,board);
 }
 
 //creates symetric board
@@ -90,7 +96,7 @@ void set_sym_board()
     {
         for (j=i; j < BOARD_SIZE; j++)
         {
-            r = rand() % NB_COLORS;
+            r = rand() % NB_COLORS + 'a';
             set_cell(i,j,r,board);
         }
     }
@@ -102,8 +108,6 @@ void set_sym_board()
             set_cell(i,j,get_cell(j,i,board),board);
         }
     }
-    set_cell(0,BOARD_SIZE-1, color1,board);
-    set_cell(BOARD_SIZE-1,0, color2,board);
 }
 
 //calculates the score of a player on a board
