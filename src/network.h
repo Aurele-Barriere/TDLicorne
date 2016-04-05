@@ -1,12 +1,15 @@
+
+/** All functions related networking */
+#ifndef NETWORK_H
+#define NETWORK_H
+
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <string.h>
 
 #include "defines.h"
-/*
-   Networking functions
-*/
+
 
 // init a server by creating a new socket and binding it with then given port number
 int init_server(const char* portno);
@@ -37,7 +40,7 @@ int socket_ready(int sockfd, unsigned timeout_ms);
 
 
 
-
+// This structure handles a group of clients
 struct client_set
 {
     int* sockfd;
@@ -45,8 +48,16 @@ struct client_set
     unsigned nb;
 };
 
+// Inits a client_set with defaults values
 struct client_set client_set_init();
+
+// Adds a socket to the client_set
 void client_set_add(struct client_set* set, int sockfd);
+
+// Sends a buffer to all the sockets of the client_set
 void client_set_send(struct client_set* set, char* msg);
+
+// Close every sockets
 void client_set_close(struct client_set set);
 
+#endif

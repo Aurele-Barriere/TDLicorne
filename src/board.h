@@ -2,6 +2,8 @@
 #ifndef BOARD_H
 #define BOARD_H
 
+#include <stdio.h>
+#include <stdlib.h>
 #include "defines.h"
 
 extern int printing; //should we print the board and choices?
@@ -19,9 +21,6 @@ char other(char color);
 
 /** Copying board into test_board to reset testing */
 void copy_board();
-
-/** Printing a given board */
-void print_board(char *b);
 
 /** Is an element within the BOARD_SIZE range? */
 int in_board(int x, int y);

@@ -1,6 +1,22 @@
 #include "render.h"
 
 
+
+//prints board
+void print_board(char * b)
+{
+    int i, j;
+    printf("Score1: %d, Score2: %d\n", score(b,color1), score(b,color2));
+    printf("Frontier1: %d, Frontier2: %d\n", frontier(b,color1), frontier(b,color2));
+    for (i=0; i<BOARD_SIZE; i++)
+    {
+        for (j=0; j<BOARD_SIZE; j++)
+            printf("%c ", get_cell(i, j, b)+97);
+        printf("\n");
+    }
+}
+
+
 void display_board(SDL_Renderer* renderer, char* board)
 {
     unsigned i, j;
@@ -85,7 +101,7 @@ void display_board(SDL_Renderer* renderer, char* board)
 
         }
     }
-    
+
 
     SDL_RenderPresent(renderer);
 
@@ -98,7 +114,7 @@ void display_waiter(SDL_Renderer* renderer)
     rect.x = 0;
     rect.y = 0;
     SDL_GetRendererOutputSize(renderer, &rect.w, &rect.h);
-    
+
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 128);
 

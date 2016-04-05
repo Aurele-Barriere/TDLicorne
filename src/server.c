@@ -1,41 +1,5 @@
 #include "server.h"
 
-void game_7colors(int sockfd);
-
-
-int game_over(char* board, struct client_set* player)
-{
-    int score1 = score(board, color1);
-    int score2 = score(board, color2);
-    int limit = (BOARD_SIZE*BOARD_SIZE)/2;
-
-    if (score1 > limit)
-        return color1 + 'a';
-    if (score2 > limit)
-        return color2 + 'a';
-    if (score1 == limit && score2 == limit)
-        return -1;
-    //when a player disconnects, his opponent wins
-
-    if (player->nb >= 2)
-    {
-
-        if (player->is_connected[0] == 0)
-        {
-            printf("First player disconnected !\n");
-            return color2 + 'a';
-        }
-        if (player->is_connected[1] == 0)
-        {
-            printf("Second player disconnected !\n");
-            return color1 + 'a';
-        }
-    }
-    return 0;
-}
-
-
-
 
 
 int main(int argc, char * argv[])
@@ -67,7 +31,7 @@ double elapsed_time(struct timeval t1)
 {
     struct timeval t2;
     gettimeofday (&t2, NULL);
-    
+
     int u1 = (t1.tv_sec * 1000000 + t1.tv_usec);
     int u2 = (t2.tv_sec * 1000000 + t2.tv_usec);
     return (u2  - u1) / 1000000.;
@@ -88,7 +52,7 @@ void game_7colors(int sockfd)
     int sock;
 
     const unsigned MAX_PLAYER = 2;
-    
+
     struct timeval t_begin;
 
 
@@ -106,12 +70,12 @@ void game_7colors(int sockfd)
 
     printf("Waiting for players to connect.\n");
     printf("%d more players required !\n\n", MAX_PLAYER - player.nb);
-    
-    
+
+
 
     while(!(winner = game_over(board, &player)))
     {
-        
+
 
         // if a client/observer tries to connect
         if(socket_ready(sockfd, 50))
@@ -186,7 +150,7 @@ void game_7colors(int sockfd)
         {
             printf("       \rtime left : %f", 20.0 - elapsed_time(t_begin));
             fflush(stdout);
-            
+
             if (elapsed_time(t_begin) >= 20.0)
             {
                 player.is_connected[current_player] = FALSE;

@@ -15,11 +15,11 @@ typedef char bool;
 #define FALSE 0
 
 
-#define WINDOW_WIDTH 200
-#define WINDOW_HEIGHT 200
+#define WINDOW_WIDTH 300
+#define WINDOW_HEIGHT 300
 
 
-#define BOARD_SIZE 10
+#define BOARD_SIZE 30
 #define NB_COLORS 7
 // What symbol will be used for players. must be negative so there is no confusion with letters.
 // To see wich symbol, add 97 and check ascii table.
@@ -31,7 +31,7 @@ typedef char bool;
 #define BUFFER_SIZE ((BOARD_SIZE)*(BOARD_SIZE)*2)
 #define MAX_TRIES 200
 
-void error (char * msg);
+void error(char* msg);
 
 
 #endif

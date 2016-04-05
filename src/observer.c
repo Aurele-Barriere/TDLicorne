@@ -5,9 +5,6 @@
 int main(int argc, char * argv[])
 {
     int sockfd;
-    bool keep_watching = TRUE;
-    char buffer[BUFFER_SIZE];
-
 
     // Checking port and address as argument
     if (argc != 3)
@@ -17,8 +14,18 @@ int main(int argc, char * argv[])
     printf("Waiting...\n");
     sockfd = init_client(argv[1], argv[2], 'o');
 
-
     printf("Successfully connected to the server.\n\n");
+
+    game_7colors(sockfd);
+
+    return 0;
+}
+
+
+void game_7colors(int sockfd)
+{
+    bool keep_watching = TRUE;
+    char buffer[BUFFER_SIZE];
 
     SDL_Init(SDL_INIT_EVERYTHING);
     SDL_Window* window = SDL_CreateWindow("7 colors : observer",SDL_WINDOWPOS_UNDEFINED,
@@ -55,6 +62,4 @@ int main(int argc, char * argv[])
 
     SDL_DestroyWindow(window);
     SDL_Quit();
-
-    return 0;
 }

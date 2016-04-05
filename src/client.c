@@ -1,20 +1,22 @@
 #include "client.h"
 
 
-void game_7colors(char you, int sockfd)
+
+
+
+int main(int argc, char * argv[])
 {
-    printf("Beginning of game of 7 colors\n");
+    int sockfd;
+    char player;
 
-    printf("Your color is %c\n", you);
-
-    char choice;
-    char buffer [BUFFER_SIZE];
-    int player = 0;
-    int winner = 0;
-    int i;
+    char buffer[BUFFER_SIZE];
 
     int choice_strat;
     char (*strat)(char) = NULL;
+
+    // Checking port and address as argument
+    if (argc != 3)
+        error("Usage : client <portno> <host>");
 
 
 
@@ -58,6 +60,41 @@ void game_7colors(char you, int sockfd)
         printf("Invalid choice. You are a human player.\n\n");
         break;
     }
+
+
+
+
+    // Creating socket
+    sockfd = init_client(argv[1], argv[2], 'p');
+
+    printf("Successfully connected to the server.\n\n");
+
+    // sending / recieving
+    memset(buffer, 0 , BUFFER_SIZE);
+    recv_verif(sockfd, buffer);
+    player = buffer[0];
+    printf("You are player %c\n", player);
+    printf("Waiting for other player...\n\n");
+
+
+    game_7colors(player, strat, sockfd);
+
+    close(sockfd);
+    return 0;
+}
+
+
+void game_7colors(char you, char (*strat)(char), int sockfd)
+{
+    printf("Beginning of game of 7 colors\n");
+
+    printf("Your color is %c\n", you);
+
+    char choice;
+    char buffer [BUFFER_SIZE];
+    int player = 0;
+    int winner = 0;
+    int i;
 
 
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -136,7 +173,7 @@ void game_7colors(char you, int sockfd)
             else
             {
                 display_board(renderer, board);
-                
+
                 if (player == you) //asking for input if needed
                     printf("It is your turn !\n");
                 else
@@ -161,37 +198,4 @@ void game_7colors(char you, int sockfd)
 
     SDL_DestroyWindow(window);
     SDL_Quit();
-}
-
-
-
-int main(int argc, char * argv[])
-{
-    int sockfd;
-    char player;
-
-    char buffer[BUFFER_SIZE];
-
-    // Checking port and address as argument
-    if (argc != 3)
-    {
-        error("Usage : client <portno> <host>");
-    }
-
-    // Creating socket
-    sockfd = init_client(argv[1], argv[2], 'p');
-    
-
-    // sending / recieving
-    memset(buffer, 0 , BUFFER_SIZE);
-    recv_verif(sockfd, buffer);
-    player = buffer[0];
-    printf("You are player %c\n", player);
-    printf("Waiting for other player...\n");
-
-
-    game_7colors(player, sockfd);
-
-    close(sockfd);
-    return 0;
 }

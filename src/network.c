@@ -129,15 +129,6 @@ int wait_client(int sockfd)
 }
 
 
-void error (char * msg)
-{
-    printf("\n error : %s\n", msg);
-    exit(1);
-}
-
-
-
-
 
 
 
