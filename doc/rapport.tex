@@ -32,7 +32,7 @@ On créera donc différents programmes (serveur, joueur et observateur) pour com
 \question{2.1}
 Nous avons utilisé le code issu de nos deux projets. Les fonctions de mise à jour du plateau et de calcul de score viennent d'un des projets, tandis que l'affichage côté client vient de l'autre.
 
-Le premier à l'avantage de ne considérer les couleurs que comme de caractères, qui s'envoient donc facilement par les \textit{sockets} TCP.
+Le premier à l'avantage de ne considérer les couleurs que comme des caractères, qui s'envoient donc facilement par les \textit{sockets} TCP.
 
 Le second permet d'avoir, grâce à la SDL2 (\url{www.libsdl.org}), un affichage élaboré pour le client (qui permet aussi de recevoir les choix du joueur en cliquant simplement sur la couleur souhaitée).
 
@@ -65,16 +65,16 @@ Ainsi, il suffit de créer un client qui suive le schéma suivant :
 
 \question{2.4 (Bonus)}
 Pour autoriser les observateurs à se connecter après le début de la partie, nous avons écrit la fonction \texttt{socket\_ready}, faisant appel à \texttt{select}, et qui permet de déterminer si un observateur est en train d'essayer de se connecter à une socket donnée. \\
-Notre programme pertmet ainsi à un observateur de se connecter à n'importe quel moment. \\
-Comme nous avons choisi d'envoyer la plateau entier à chaque coup, nous n'avons pas eu à modifier le code de l'obervateur.
+Notre programme permet ainsi à un observateur de se connecter à n'importe quel moment. \\
+Comme nous avons choisi d'envoyer la plateau entier à chaque coup, nous n'avons pas eu à modifier le code de l'observateur.
 
 
 
 \question{2.5 (Bonus)}
-Pour autoriser plusieurs observateurs, nous avons défini une structure \texttt{client\_set}. Cette structure permet de gérer un ensemble de \textit{socket}. Nous avons défini des fonctions pour manipuler cette structure avec entre autres :
+Pour autoriser plusieurs observateurs, nous avons défini une structure \texttt{client\_set}. Cette structure permet de gérer un ensemble de \texttt{client}, chaque \texttt{client} étant principalement composé d'une \textit{socket}. Nous avons défini des fonctions pour manipuler cette structure avec entre autres :
 \begin{itemize}
-\item \texttt{client\_set\_add} : permet d'ajouter une socket à l'ensemble.
-\item \texttt{client\_set\_send} : permet d'envoyer un buffer à toutes les \textit{socket} de l'ensemble.
+\item \texttt{client\_set\_add} : permet d'ajouter un \texttt{client} à l'ensemble.
+\item \texttt{client\_set\_send} : permet d'envoyer un buffer à toutes les \textit{socket} des \texttt{client} de l'ensemble.
 \end{itemize}
 À l'aide de cette structure, la gestion d'un nombre variable d'observateurs est donc assez simple côté serveur. Côté observateur, le fonctionnement est inchangé.
 
@@ -84,7 +84,7 @@ Pour autoriser plusieurs observateurs, nous avons défini une structure \texttt{
 
 Ce programme a été testé sur un réseau local (sur la même machine et sur des machines différentes).
 
-Un problème s'est manifesté : vu que nous avons pris des morceaux de nos 2 projets, nous n'avions pas les mêmes conventions. Par exemple, l'un considérait des couleurs de 0 à 6 et l'autre de 97 à 103 (le code ASCII de 'a' à 'g'). La première version est utile pour la génération aléaoire, mais la seonde plus pratique pour l'affichage. Nous avons dû modifier nos codes en conséquence.
+Un problème s'est manifesté : vu que nous avons pris des morceaux de nos 2 projets, nous n'avions pas les mêmes conventions. Par exemple, l'un considérait des couleurs de 0 à 6 et l'autre de 97 à 103 (le code ASCII de 'a' à 'g'). La première version est utile pour la génération aléaoire, mais la seconde plus pratique pour l'affichage. Nous avons dû modifier nos codes en conséquence.
 
 
 
@@ -118,17 +118,13 @@ La première solution, bien que facilement implémentable, soulève plusieurs pr
 Nous avons donc choisi la deuxième solution pour des raisons de simplicité et de sécurité.
 
 \question{2.9 (Bonus)}
-Nous avons amélioré la structure \texttt{client\_set}, de telle sorte que le serveur puisse gérer puisse gérer un nombre variable d'observateurs et de joueurs. \\
+Nous avons amélioré les structures \texttt{client} et \texttt{client\_set}, de telle sorte que le serveur puisse gérer un nombre variable d'observateurs et de joueurs. \\
 Nous avons également modifié le fonctionnement du serveur, de façon à ce que les observateurs et les joueurs puissent se connecter dans un ordre quelconque. La partie se lance alors lorsque un nombre défini de joueurs sont connectés.
 
 \question{2.10}
 Dans un premier temps, on se sert des valeurs de retour des fonctions \texttt{send()} et \texttt{recv()} pour vérifier qu'on a bien reçu un \textit{buffer} de la taille escomptée.
 
-S'il y a une erreur lors de l'envoi ou de la réception avec un client, on considèrera au bout d'un certain nombre d'essais (défini dans une constante), que le joueur est déconnecté.
-
-Le serveur attribuera alors automatiquement la victoire au second joueur. 
-
-Si un observateur disconnecte, la partie continue comme si de rien n'était.
+S'il y a une erreur lors de l'envoi ou de la réception avec un client, on considèrera au bout d'un certain nombre d'essais (défini dans une constante), que le joueur est déconnecté. Le serveur attribuera alors automatiquement la victoire au second joueur. Si un observateur se déconnecte, la partie continue comme si de rien n'était.
 \question{2.11}
 Le programme a été testé et commenté.
 
@@ -136,7 +132,7 @@ Le programme a été testé et commenté.
 \sec{Compétition équitable}
 
 \question{2.12}
-Nous avons ajouté un champ \texttt{time} à notre structure \texttt{client\_set} qui accumule le temps de jeu de chaque joueur, mesuré à l'aide de notre fonction \texttt{elapsed\_time}. \\
+Nous avons ajouté un champ \texttt{time} à notre structure \texttt{client} qui accumule le temps de jeu de chaque joueur, mesuré à l'aide de notre fonction \texttt{elapsed\_time}. \\
 À chaque tour, on affiche côté serveur en temps réel le temps restant au joueur actuel pour effectuer son coup.
 On affiche les temps des joueurs à la fin de la partie.
 
@@ -155,7 +151,23 @@ Deux joueurs se chargeront donc de jouer à tour de rôle, à distance.
 Il n'y a que peu de modifications à faire dans le protocole : au lieu de jouer le coup du serveur, on écoutera sur une autre \textit{socket} le coup du second joueur.
 
 
-\sec{Organisation}
+\question{Quatre joueurs}
+
+Même si nous n'avons pas eu le temps d'implémenter cette fonctionnalité, nous avons conçu notre programme de façon à gérer un nombre variable de joueurs. Quelques modifications mineures seraient toutefois nécessaires pour pouvoir lancer une partie à quatre joueurs.
+
+
+
+
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.4]{diagramme.png}
+\caption{Organisation en modules de notre projet}
+\end{center}
+\end{figure}
+
+
+\sec{Synthèse}
+
 
 Nous avons organisé notre projet en différents modules : 
 \begin{itemize}
@@ -167,17 +179,6 @@ Nous avons organisé notre projet en différents modules :
 \end{itemize}
 
 La compilation de notre programme va créer trois exécutables, \texttt{server}, \texttt{observer} et \texttt{client}, qui dépendent tous d'une partie de nos modules. Le diagramme de la Figure 1 décrit la dépendance des modules. \\
-
-
-\begin{figure}
-\begin{center}
-\includegraphics[scale=0.6]{diagramme.png}
-\caption{Organisation en modules de notre projet}
-\end{center}
-\end{figure}
-
-
-\sec{Synthèse}
 
 Ce projet fut l'occasion pour nous de nous intéresser pour la première fois à l'implémentation des \textit{sockets} en C.
 
