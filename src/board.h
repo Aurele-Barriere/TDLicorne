@@ -1,6 +1,7 @@
 /** All functions related to the board we're playing on */
 #ifndef BOARD_H
 #define BOARD_H
+
 #include "defines.h"
 
 extern int printing; //should we print the board and choices?

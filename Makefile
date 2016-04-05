@@ -21,17 +21,12 @@ ifeq (newclass,$(firstword $(MAKECMDGOALS)))
   FILE_N := `echo $(CLASS_N) | tr A-Z a-z`
 endif
 
-
 all:  $(EXEC)
+	
 
-server : $(filter-out out/client.o out/observer.o, $(OBJ))
-	$(CXX) -o $@ $^ $(LDFLAGS)
-
-client : $(filter-out out/server.o out/observer.o, $(OBJ))
-	$(CXX) -o $@ $^ $(LDFLAGS)
-
-observer : $(filter-out out/server.o out/client.o, $(OBJ))
-	$(CXX) -o $@ $^ $(LDFLAGS)
+$(EXEC) : $(OBJ)
+	$(CXX) -o $@ $(OBJ_DIR)/$@.o $(filter-out $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(EXEC))), $^) $(LDFLAGS)
+	
 
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.$(EXT) $(wildcard $(SRC_DIR)/%.h) $(SRC_DIR)/defines.h
