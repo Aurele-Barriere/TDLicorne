@@ -40,7 +40,7 @@ int socket_ready(int sockfd, unsigned timeout_ms);
 
 
 
-
+// This structure handles a single client (player or observer)
 struct client
 {
     int sockfd;

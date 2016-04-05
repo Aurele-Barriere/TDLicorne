@@ -37,10 +37,6 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.$(EXT) $(wildcard $(SRC_DIR)/%.h) $(SRC_DIR)/define
 	
 .PHONY: clean mrproper help newclass soupe_aux_choux astyle
 
-test :
-	@konsole -e ./server 4242
-	@konsole -e ./client 4242 127.0.0.1
-	@konsole -e ./client 4242 127.0.0.1
 
 soupe_aux_choux :
 	@cvlc soupe_aux_choux.mp3
@@ -70,6 +66,7 @@ help:
 	@echo 'make all                     Build project executable'
 	@echo 'make clean                   Clean objects directory'
 	@echo 'make mrproper                Clean objects directory and binaries'
+	@echo 'make astyle                  Correctly indents source files'
 	@echo 'make newclass <class name>   Create a new c++ class'
 	@echo 'make help                    Show this help message'
 	@echo ''

@@ -34,7 +34,7 @@ int game_over(char* board, struct client_set player)
 {
     if (player.nb != 2)
         return 0;
-    
+
     int score1 = score(board, player.client[0].id);
     int score2 = score(board, player.client[1].id);
     int limit = (BOARD_SIZE*BOARD_SIZE)/2;
@@ -45,8 +45,8 @@ int game_over(char* board, struct client_set player)
         return  player.client[1].id;
     if (score1 == limit && score2 == limit)
         return -1;
-    
-    
+
+
     //when a player disconnects, his opponent wins
     if (!player.client[0].is_connected)
     {
@@ -58,7 +58,7 @@ int game_over(char* board, struct client_set player)
         printf("Second player disconnected !\n");
         return player.client[0].id;
     }
-    
+
     return 0;
 }
 

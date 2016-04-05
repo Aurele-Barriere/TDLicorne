@@ -32,9 +32,9 @@ char alea_useful_colors(char player)
                 if (useful[c] == 0)
                 {
                     if (get_cell(i-1,j,board) == player ||
-                        get_cell(i+1,j,board) == player ||
-                        get_cell(i,j-1,board) == player ||
-                        get_cell(i,j+1,board) == player)
+                            get_cell(i+1,j,board) == player ||
+                            get_cell(i,j-1,board) == player ||
+                            get_cell(i,j+1,board) == player)
                         useful[c] = 1;
                 }
             }
@@ -93,10 +93,10 @@ char wrong_greedy(char player)
             {
                 c = (int) (color - 'a');
 
-                if (get_cell(i-1,j,board) == player || 
-                    get_cell(i+1,j,board) == player || 
-                    get_cell(i,j-1,board) == player || 
-                    get_cell(i,j+1,board) == player)
+                if (get_cell(i-1,j,board) == player ||
+                        get_cell(i+1,j,board) == player ||
+                        get_cell(i,j-1,board) == player ||
+                        get_cell(i,j+1,board) == player)
                     occurrences[c]++;
             }
         }
@@ -163,11 +163,11 @@ char maximize(int (*f) (char *, char), char player)
                 if (useful[c] == 0)
                 {
                     if (get_cell(i-1,j,board) == player ||
-                        get_cell(i+1,j,board) == player ||
-                        get_cell(i,j-1,board) == player ||
-                        get_cell(i,j+1,board) == player)
+                            get_cell(i+1,j,board) == player ||
+                            get_cell(i,j-1,board) == player ||
+                            get_cell(i,j+1,board) == player)
                         useful[c] = 1;
-                    
+
                 }
             }
         }

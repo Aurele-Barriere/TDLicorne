@@ -142,7 +142,7 @@ struct client_set client_set_init()
 void client_set_add(struct client_set* set, int sockfd, char id)
 {
     set->nb++;
-    
+
     set->client = (struct client*) realloc(set->client, set->nb * sizeof(struct client));
     set->client[set->nb-1].sockfd = sockfd;
     set->client[set->nb-1].is_connected = TRUE;

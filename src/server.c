@@ -68,7 +68,7 @@ void game_7colors(int sockfd)
     set_sym_board(); //initializing board
     set_cell(0, BOARD_SIZE-1, symbols[0], board);
     set_cell(BOARD_SIZE-1, 0, symbols[1], board);
-    
+
     printf("The board has been generated.\n\n");
 
     printf("Waiting for players to connect.\n");
@@ -173,7 +173,7 @@ void game_7colors(int sockfd)
                     }
                     choice = buffer[0];
                 }
-                
+
                 player.client[current_player].time += t;
 
                 printf("\nPlayer %c played color %c\n\n", player.client[current_player].id, choice);
@@ -205,15 +205,15 @@ void game_7colors(int sockfd)
     buffer[1] = winner;
 
     printf("Game over !\n\n");
-    
+
     printf("Time for player %c : %f\n", player.client[0].id, player.client[0].time);
     printf("Time for player %c : %f\n\n", player.client[1].id, player.client[1].time);
-    
+
     if (winner == -1)
         printf("Draw\n");
     else
         printf("Player %c won !\n", winner);
-    
+
 
     client_set_send(&player, buffer);
     client_set_send(&player, buffer); // we must send it twice if one of the player expect the other player's move

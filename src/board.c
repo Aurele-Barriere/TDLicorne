@@ -23,8 +23,8 @@ void set_cell(int x, int y, char color, char * b)
 char other(char color)
 {
     char c;
-    
-    
+
+
     int i;
     int j;
     for (i = 0; i < BOARD_SIZE; i++)
@@ -36,7 +36,7 @@ char other(char color)
                 return c;
         }
     }
-            
+
     return '\0';
 }
 
